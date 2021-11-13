@@ -1,0 +1,54 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+   <a class="navbar-brand" href="#">couw</a>
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+   <span class="navbar-toggler-icon"></span>
+   </button>
+   <div class="collapse navbar-collapse justificarALaIzquierda" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+         <li class="nav-item">
+            <a class="nav-link" href="#"><%=user.nombreUsuario %></a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" href="#"><%=user.email %></a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" href="#">LVL <%=user.nivelUsuario %></a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" href="#">EXP <%=user.experienciaUsuario %></a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" href="#">$ <%=user.monedasUsuario %></a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link"  href="#openModalConfig"> <span class="fa fa-cog"></span></a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+         </li>
+      </ul>
+   </div>
+</nav>
+<div id="openModalConfig" class="modalDialog">
+   <div>
+      <a href="#close" id="botonModalCerrar" title="Close" class="close">X</a>
+      <div class="centrarConfigJugadorModal">
+         <h2>Información del Jugador</h2>
+         <form action="/guardarPerfil/<%=user._id%>" method="POST">
+            <p>Partidas Jugadas: <%=user.partidasJugadas %></p>       
+            <p>Partidas Ganadas: <%=user.partidasGanadas %></p>     
+            <p>Partidas Perdidas: <%=user.partidasPerdidas %></p>       
+            <p>Promedio de Victorias: <%= parseInt((user.partidasGanadas * 100) / user.partidasJugadas) %> %</p>         
+
+            <div class="form-group">
+               <label for="nombreUsuario">Nombre de Usuario:</label>  
+               <input style="text-align: center; max-width: 170px; margin: auto;" type="nombreUsuario" id="nombreUsuario" name="nombreUsuario" class="form-control" value="<%=user.nombreUsuario %>" placeholder="(Sin nombre)">
+            </div>
+            <input type="submit" value="Actualizar Nombre" class="pushy__btn pushy__btn--sm pushy__btn--green">
+      </div>
+      </form>
+   </div>
+</div>
+ 

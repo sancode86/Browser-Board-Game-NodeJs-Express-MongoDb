@@ -1,0 +1,51 @@
+.terreno1 {
+    background-image: repeating-linear-gradient(-45deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 1px, transparent 6px);
+    background-size: 8px 8px;
+}
+
+.terreno2 {
+    background-image: repeating-linear-gradient(-45deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 1px, transparent 6px);
+    background-size: 4px 4px;
+}
+
+.terreno3 {
+    background-image: repeating-linear-gradient(-26deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 2px, transparent 3px, transparent 7px);
+    background-size: 6px 8px;
+}
+
+.terreno4 {
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 1px, transparent 7px);
+    background-size: 2px;
+}
+.terreno5 {
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 1px, transparent 7px);
+    background-size: 16px;
+}
+.terreno6 {
+    background-image: repeating-linear-gradient(11deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 0px, transparent 4px);
+    background-size: 8px;
+}
+.terreno7 {
+    background-image: repeating-linear-gradient(-214deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 0px, transparent 13px);
+    background-size: 9px;
+}
+.terreno8 {
+    background-image: repeating-linear-gradient(-319deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 3px, transparent 15px);
+    background-size: 4px;
+}
+.terreno9 {
+    background-image: repeating-linear-gradient(315deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 3px, transparent -19px, transparent 5px);
+    background-size: 6px;
+}
+.terreno10 {
+    background-image: repeating-linear-gradient(233deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent -19px, transparent 2px);
+    background-size: 10px;
+}
+.terreno11 {
+    background-image: repeating-linear-gradient(223deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 0px, transparent 2px);
+    background-size: 20px;
+}
+.terreno12{
+    background-image: repeating-linear-gradient(36deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 0px, transparent 2px);
+    background-size: 12px;
+}

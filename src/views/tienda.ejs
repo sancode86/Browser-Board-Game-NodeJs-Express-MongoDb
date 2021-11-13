@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COUW | Tienda</title>
+    <%- include('partials/head') %>
+    <%- include('partials/nav') %>
+  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <body onload="mostrarCartas(); actualizarParaGuardar();" >
+    <br>
+    <br>
+    <br>
+    <div class="container">
+      <header class="text-center">
+        <h1>Tienda</h1>
+        <button class="pushy__btn pushy__btn--sm pushy__btn--red" onclick="volverPerfil();">Volver</button>
+    
+          <p style="display: none;" id="monedasUsuarioID"></p>     
+        <br>         
+        <br>
+        <table class="tablaVendedor">
+          <tr>
+            <th>
+              <img id="imagenVendedor" src="/img/personajes/vendedor.gif" alt="vendedor" width="310 " height="200">
+              <p id="vozVendedor"></p>
+            </th>
+            <th>
+              <div class="text-center">
+
+                <button class="pushy__btn pushy__btn--sm pushy__btn--blue" id="botonComprar" onclick="botonComprar();">Comprar</button>
+                <button class="pushy__btn pushy__btn--sm pushy__btn--blue" id="botonVender" onclick="botonVender();">Vender</button>
+              </div>
+              <div id="campoDeVentaCompra" style="display: none;">
+                <h3 id="tipoDeTransaccion">Listado</h3>
+                <table class="tablaVendedor">
+                  <tr>
+                    <th class="encabezadoListaCompra">Item</th>
+                    <th class="encabezadoListaCompra">Valor</th>
+                  </tr>
+                  <tr>
+                    <th id="listadoVentaCompra" class="listadoVentaCompra">  
+                    </th>
+                    <th id="valorVentaCompra" class="valorVentaCompra"> 
+                    </th>
+                  </tr>
+                </table>
+                <div class="text-center centrarBotonesTienda">
+                <button style="display: none;" id="botonAceptarTransaccion" class="pushy__btn pushy__btn--sm pushy__btn--green estiloStickersDisponibles" onclick="botonEnviarInventario();">Aceptar</button>
+                <button style="display: none;" id="botonCancelarTransaccion" class="pushy__btn pushy__btn--sm pushy__btn--red estiloStickersDisponibles" onclick="botonCancelar();">Cancelar</button>
+                </div>
+              </div>
+            </th>
+          </tr>
+        </table>
+        <form id="formInventario" action="/guardarInventario/<%=user._id%>" method="POST">
+          <div class="form-group" style="display: none;">                    
+            <input type="text" id="cantidadStickerAtaqueX2" name="cantidadStickerAtaqueX2" class="form-control" > 
+            <input type="text" id="cantidadStickerDefensaX2" name="cantidadStickerDefensaX2" class="form-control" > 
+            <input type="text" id="cantidadStickerAtaqueX3" name="cantidadStickerAtaqueX3" class="form-control" > 
+            <input type="text" id="cantidadStickerDefensaX3" name="cantidadStickerDefensaX3" class="form-control" > 
+            <input type="text" id="cantidadStickerAtaqueX4" name="cantidadStickerAtaqueX4" class="form-control" > 
+            <input type="text" id="cantidadStickerDefensaX4" name="cantidadStickerDefensaX4" class="form-control" > 
+            <input type="text" id="cantidadStickerAtaqueX5" name="cantidadStickerAtaqueX5" class="form-control" > 
+            <input type="text" id="cantidadStickerDefensaX5" name="cantidadStickerDefensaX5" class="form-control" > 
+            <input type="text" id="cantidadStickerAtaqueX6" name="cantidadStickerAtaqueX6" class="form-control" > 
+            <input type="text" id="cantidadStickerDefensaX6" name="cantidadStickerDefensaX6" class="form-control" > 
+            <input type="text" id="monedasDelUsuario" name="monedasUsuario" class="form-control"  value=" <%- user.monedasUsuario %>"> 
+            <input type="text" id="todasLasCartasUsuario" name="todasLasCartasUsuario" class="form-control" > 
+          </div>
+        </form>
+      </header>
+   
+        <div class="card text-center mt-5">
+          <div class="card-body">
+            <div id="tablaDeCartasALaVenta" style="display: none;">
+              <h1>Cartas a la venta</h1>
+         
+              <table class="table table-responsive table-striped">
+                  <thead>
+                    <tr>
+                      <th>N° Carta</th>
+                      <th>Imagen</th>
+                      <th>Nombre</th>
+                      <th>Descripcion</th>
+                      <th>Ataque</th>
+                      <th>Defensa</th>
+                      <th>+Vida</th>
+                      <th>Mov. Horizontal</th>
+                      <th>Mov. Vertical</th>
+                      <th>Mov. Diagonal</th>
+                      <th>Tipo</th>
+                      <th>Sticker Ataque</th>
+                      <th>Sticker Defensa</th>
+                      <th>Precio</th>
+                      <th>COMPRAR</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cartasEnVentaId">                                                                        
+                  </tbody>
+                </table>
+        
+              <!-- fin tabla--> 
+            </div>
+            <br>
+            <div id="tablaCosasParaVender" style="display: none;">
+              <h1>Todas tus cartas</h1>
+         
+              <table class="table table-responsive table-striped">
+                  <thead>
+                    <tr>
+                      <th>N° Carta</th>
+                      <th>Imagen</th>
+                      <th>Nombre</th>
+                      <th>Descripcion</th>
+                      <th>Ataque</th>
+                      <th>Defensa</th>
+                      <th>+Vida</th>
+                      <th>Mov. Horizontal</th>
+                      <th>Mov. Vertical</th>
+                      <th>Mov. Diagonal</th>
+                      <th>Tipo</th>
+                      <th>Sticker Ataque</th>
+                      <th>Sticker Defensa</th>
+                      <th>Precio</th>
+                      <th>VENDER</th>
+                    </tr>
+                  </thead>
+                  <tbody id="todasLasCartasDelUsuario">
+                  </tbody>
+                </table>
+                <p id="noTienesCartasExtra">(No tienes cartas extras)</p>
+           
+              <!-- fin tabla--> 
+              <h1>Todos tu Stickers</h1>
+              <div class="contenedorCartas">
+                <p id="noTienesStickers">(No tienes Stickers)</p>
+                <% for(var i = 0; i<user.cantidadStickerAtaqueX2; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;" id="stickerataquex2id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Ataque x2</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerAtaqueX2(stickerataquex2id<%=i%>);">Vender</button>   
+                </div>
+                <%}%> 
+                <% for(var i = 0; i<user.cantidadStickerAtaqueX3; i++){  %> 
+                <div style="border: 1px solid black; width: 200px; " id="stickerataquex3id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Ataque x3</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerAtaqueX3(stickerataquex3id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+                <% for(var i = 0; i<user.cantidadStickerAtaqueX4; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerataquex4id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Ataque x4</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerAtaqueX4(stickerataquex4id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+                <% for(var i = 0; i<user.cantidadStickerAtaqueX5; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerataquex5id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Ataque x5</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerAtaqueX5(stickerataquex5id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+                <% for(var i = 0; i<user.cantidadStickerAtaqueX6; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerataquex6id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Ataque x6</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerAtaqueX6(stickerataquex6id<%=i%>)">Vender</button>   
+                </div>
+                <%}%> 
+                <% for(var i = 0; i<user.cantidadStickerDefensaX2; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;" id="stickerdefensax2id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Defensa x2</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerDefensaX2(stickerdefensax2id<%=i%>)">Vender</button>   
+                </div>
+                <%}%> 
+                <% for(var i = 0; i<user.cantidadStickerDefensaX3; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerdefensax3id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Defensa x3</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerDefensaX3(stickerdefensax3id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+                <% for(var i = 0; i<user.cantidadStickerDefensaX4; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerdefensax4id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Defensa x4</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerDefensaX4(stickerdefensax4id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+                <% for(var i = 0; i<user.cantidadStickerDefensaX5; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerdefensax5id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Defensa x5</p>
+                  <button  class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerDefensaX5(stickerdefensax5id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+                <% for(var i = 0; i<user.cantidadStickerDefensaX6; i++){  %> 
+                <div style="border: 1px solid black; width: 200px;"id="stickerdefensax6id<%=i%>" class="diseñoSticker">
+                  <p>Sticker Defensa x6</p>
+                  <button class="pushy__btn pushy__btn--sm pushy__btn--blue" onclick="venderStickerDefensaX6(stickerdefensax6id<%=i%>)">Vender</button>   
+                </div>
+                <%}%>   
+              </div>
+            </div>
+          </div>
+        </div>
+     
+    </div>
+    <input type="text" disabled style="display: none;" id="idUsuario" name="idUsuario" value="<%=user._id%>" placeholder="<%=user._id%>" >
+    <script>
+      console.log("¡Cargando stickers!");
+document.getElementById("cantidadStickerAtaqueX2").value = ('<%- user.cantidadStickerAtaqueX2 %>');
+document.getElementById("cantidadStickerDefensaX2").value = ('<%- user.cantidadStickerDefensaX2 %>');
+
+document.getElementById("cantidadStickerAtaqueX3").value = ('<%- user.cantidadStickerAtaqueX3 %>');
+document.getElementById("cantidadStickerDefensaX3").value = ('<%- user.cantidadStickerDefensaX3 %>');
+
+document.getElementById("cantidadStickerAtaqueX4").value = ('<%- user.cantidadStickerAtaqueX4 %>');
+document.getElementById("cantidadStickerDefensaX4").value = ('<%- user.cantidadStickerDefensaX4 %>');
+
+document.getElementById("cantidadStickerAtaqueX5").value = ('<%- user.cantidadStickerAtaqueX5 %>');
+document.getElementById("cantidadStickerDefensaX5").value = ('<%- user.cantidadStickerDefensaX5 %>');
+
+document.getElementById("cantidadStickerAtaqueX6").value = ('<%- user.cantidadStickerAtaqueX6 %>');
+document.getElementById("cantidadStickerDefensaX6").value = ('<%- user.cantidadStickerDefensaX6 %>');
+
+
+var sticker1 = ('<%- user.cantidadStickerAtaqueX2 %>');
+var sticker2 =  ('<%- user.cantidadStickerDefensaX2 %>');
+
+var sticker3 = ('<%- user.cantidadStickerAtaqueX3 %>');
+var sticker4 =  ('<%- user.cantidadStickerDefensaX3 %>');
+
+var sticker5 = ('<%- user.cantidadStickerAtaqueX4 %>');
+var sticker6 = ('<%- user.cantidadStickerDefensaX4 %>');
+
+var sticker7 =  ('<%- user.cantidadStickerAtaqueX5 %>');
+var sticker8 = ('<%- user.cantidadStickerDefensaX5 %>');
+
+var sticker9 = ('<%- user.cantidadStickerAtaqueX6 %>');
+var sticker10 = ('<%- user.cantidadStickerDefensaX6 %>');
+
+if ((sticker1 != 0) || (sticker2 != 0) || (sticker3 != 0) || (sticker4 != 0) || (sticker5 != 0) || (sticker6 != 0) || (sticker7 != 0) || (sticker8 != 0) || (sticker9 != 0) || (sticker10 != 0) ){
+  document.getElementById("noTienesStickers").innerHTML = ""; 
+}
+
+
+
+console.log("¡Cargando cartas!");
+var mazoJson = JSON.parse('<%- mazoJson %>');
+var restoDeCartasJson = JSON.parse('<%- restoDeCartasJson %>');
+var esUnArray = Array.isArray(mazoJson);
+var cartasQueEstanEnVentaOK = JSON.parse('<%- ventacartasOK %>');
+console.log(cartasQueEstanEnVentaOK);
+var monedasUsuario = '<%- user.monedasUsuario %>';
+
+function mostrarCartas() {
+  document.getElementById("cartasEnVentaId").innerHTML = "";
+  for (var i = 0; i < cartasQueEstanEnVentaOK.length; i++) {
+    crearTr = document.createElement('tr');
+    crearTr.setAttribute("id", "linea" + [i]);
+    document.getElementById("cartasEnVentaId").appendChild(crearTr);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].idCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("img");
+    node.src = "/img/cartas/" + cartasQueEstanEnVentaOK[i].imagenCarta + ".png";
+    node.width = "50";
+    node.height = "50";
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].nombreCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].descripcionCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].ataqueCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].defensaCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].puntosCuraJugador);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].casillerosMovimientoHorizontal);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].casillerosMovimientoVertical);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].casillerosMovimientoDiagonal);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].tipoCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].stickerAtaque);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].stickerDefensa);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(cartasQueEstanEnVentaOK[i].precioCarta);
+    node.appendChild(textnode);
+    document.getElementById("linea" + [i]).appendChild(node);
+
+    var button = document.createElement("button");
+    button.innerHTML = 'Comprar';
+    button.setAttribute("onclick", "comprarCarta(" + i + ")");
+    button.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue");
+    document.getElementById("linea" + [i]).appendChild(button);
+  }
+
+  if(restoDeCartasJson.length != 0){ document.getElementById("noTienesCartasExtra").innerHTML = ""; }
+
+  for (var i = 0; i < restoDeCartasJson.length; i++) {
+    crearTr = document.createElement('tr');
+    crearTr.setAttribute("id", "lineaResto" + [i]);
+    document.getElementById("todasLasCartasDelUsuario").appendChild(crearTr);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].idCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("img");
+    node.src = "/img/cartas/" + restoDeCartasJson[i].imagenCarta + ".png";
+    node.width = "50";
+    node.height = "50";
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].nombreCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].descripcionCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].ataqueCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].defensaCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].puntosCuraJugador);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].casillerosMovimientoHorizontal);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].casillerosMovimientoVertical);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].casillerosMovimientoDiagonal);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].tipoCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].stickerAtaque);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].stickerDefensa);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var node = document.createElement("td");
+    var textnode = document.createTextNode(restoDeCartasJson[i].precioCarta);
+    node.appendChild(textnode);
+    document.getElementById("lineaResto" + [i]).appendChild(node);
+
+    var button = document.createElement("button");
+    button.innerHTML = 'Vender';
+    button.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue");
+    button.setAttribute("onclick", "venderCarta(" + i + ")");
+    document.getElementById("lineaResto" + [i]).appendChild(button);
+  }
+}
+function comprarCarta(i) {
+  if ((monedasUsuario - cartasQueEstanEnVentaOK[i].precioCarta) >= 0) {
+    document.getElementById("vozVendedor").innerHTML = "¡Buena elección!";
+    document.getElementById("imagenVendedor").src = "/img/personajes/vendedorhabla.gif";
+    $("#todasLasCartasDelUsuario").empty();
+    restoDeCartasJson.push(cartasQueEstanEnVentaOK[i]);
+
+    var item = document.createElement("p");
+    item.innerHTML = cartasQueEstanEnVentaOK[i].nombreCarta;
+    document.getElementById("listadoVentaCompra").appendChild(item);
+
+    var item = document.createElement("p");
+    item.innerHTML = cartasQueEstanEnVentaOK[i].precioCarta;
+    document.getElementById("valorVentaCompra").appendChild(item);
+
+    monedasUsuario = (monedasUsuario - cartasQueEstanEnVentaOK[i].precioCarta);
+
+    document.getElementById("monedasDelUsuario").value = monedasUsuario;
+
+    cartasQueEstanEnVentaOK.splice(i, 1);
+    mostrarCartas();
+    actualizarParaGuardar();
+  } else {
+    document.getElementById("vozVendedor").innerHTML = "¡No tienes las monedas suficientes!";
+    document.getElementById("imagenVendedor").src = "/img/personajes/vendedorhabla.gif";
+  }
+}
+function venderCarta(i) {
+  document.getElementById("vozVendedor").innerHTML = "Lo agrego a la lista";
+  document.getElementById("imagenVendedor").src = "/img/personajes/vendedorhabla.gif";
+  monedasUsuario = (parseInt(monedasUsuario) + restoDeCartasJson[i].precioCarta);
+  document.getElementById("monedasDelUsuario").value = monedasUsuario;
+  var item = document.createElement("p");
+
+  item.innerHTML = restoDeCartasJson[i].nombreCarta;
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = restoDeCartasJson[i].precioCarta;
+  document.getElementById("valorVentaCompra").appendChild(item);
+
+  $("#todasLasCartasDelUsuario").empty();
+  restoDeCartasJson.splice(i, 1);
+  mostrarCartas();
+  actualizarParaGuardar();
+
+}
+function actualizarParaGuardar() {
+  document.getElementById("todasLasCartasUsuario").innerHTML = "";
+  document.getElementById("todasLasCartasUsuario").value = JSON.stringify(restoDeCartasJson);
+  document.getElementById("monedasUsuarioID").innerHTML = monedasUsuario;
+}
+function venderStickerAtaqueX2(borrar) {
+  document.getElementById("cantidadStickerAtaqueX2").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Ataque X 2';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '2';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerAtaqueX3(borrar) {
+  document.getElementById("cantidadStickerAtaqueX3").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Ataque X 3';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '3';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerAtaqueX4(borrar) {
+  document.getElementById("cantidadStickerAtaqueX4").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Ataque X 4';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '4';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerAtaqueX5(borrar) {
+  document.getElementById("cantidadStickerAtaqueX5").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Ataque X 5';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '5';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerAtaqueX6(borrar) {
+  document.getElementById("cantidadStickerAtaqueX6").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Ataque X 6';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '6';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerDefensaX2(borrar) {
+  document.getElementById("cantidadStickerDefensaX2").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Defensa X 2';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '2';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerDefensaX3(borrar) {
+  document.getElementById("cantidadStickerDefensaX3").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Defensa X 3';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '3';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerDefensaX4(borrar) {
+  document.getElementById("cantidadStickerDefensaX4").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Defensa X 4';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '4';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerDefensaX5(borrar) {
+  document.getElementById("cantidadStickerDefensaX5").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Defensa X 5';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '5';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function venderStickerDefensaX6(borrar) {
+  document.getElementById("cantidadStickerDefensaX6").value -= 1;
+  var borrar;
+  borrar.style.display = "none";
+
+  var item = document.createElement("p");
+  item.innerHTML = 'Sticker Defensa X 6';
+  document.getElementById("listadoVentaCompra").appendChild(item);
+
+  var item = document.createElement("p");
+  item.innerHTML = '6';
+  document.getElementById("valorVentaCompra").appendChild(item);
+}
+function botonComprar() {
+  document.getElementById("tablaDeCartasALaVenta").style = "display: block";
+  document.getElementById("tablaCosasParaVender").style = "display: none";
+  document.getElementById("botonAceptarTransaccion").style = "display: block";
+  document.getElementById("campoDeVentaCompra").style = "display: block";
+  document.getElementById("botonComprar").style = "display: none";
+  document.getElementById("botonVender").style = "display: none";
+  document.getElementById("tipoDeTransaccion").innerHTML = "Listado De Compra";
+  document.getElementById("botonCancelarTransaccion").style = "display: block";
+}
+function botonVender() {
+  document.getElementById("tablaDeCartasALaVenta").style = "display: none";
+  document.getElementById("tablaCosasParaVender").style = "display: block";
+  document.getElementById("botonAceptarTransaccion").style = "display: block";
+  document.getElementById("campoDeVentaCompra").style = "display: block";
+  document.getElementById("botonComprar").style = "display: none";
+  document.getElementById("botonVender").style = "display: none";
+  document.getElementById("tipoDeTransaccion").innerHTML = "Listado De Venta";
+  document.getElementById("botonCancelarTransaccion").style = "display: block";
+}
+function botonCancelar() {
+  tienda();
+}    
+      
+    </script>
+  </body>
+</html>

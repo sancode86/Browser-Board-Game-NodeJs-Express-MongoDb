@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COUW | Perfil</title>
+    <%- include('partials/head') %> <%- include('partials/nav') %>
+  </head>
+  <body>
+    <br />
+    <div class="container">
+      <div class="container">
+        <div class="card text-center mt-5">
+          <div class="card-body menuPrincipalEstiloBotones">
+            <button
+              class="pushy__btn pushy__btn--md pushy__btn--blue"
+              onclick="sonidoBoton(); jugar();"
+            >
+              Iniciar Partida
+            </button>
+            <br />
+            <button
+              class="pushy__btn pushy__btn--md pushy__btn--blue"
+              onclick="sonidoBoton(); verInventario();"
+            >
+              Mi Inventario
+            </button>
+            <br />
+            <button
+              class="pushy__btn pushy__btn--md pushy__btn--blue"
+              onclick="sonidoBoton(); tienda();"
+            >
+              Tienda
+            </button>
+            <br />
+            <button
+              class="pushy__btn pushy__btn--md pushy__btn--blue"
+              onclick="sonidoBoton(); apostar();"
+            >
+              Apostar Cartas
+            </button>
+            <br />
+            <button
+              class="pushy__btn pushy__btn--md pushy__btn--blue"
+              onclick="sonidoBoton(); verGaleriaJugador();"
+            >
+              Galeria
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input
+      type="text"
+      disabled
+      style="display: none"
+      id="idUsuario"
+      name="idUsuario"
+      value="<%=user._id%>"
+      placeholder="<%=user._id%>"
+    />
+  </body>
+</html>

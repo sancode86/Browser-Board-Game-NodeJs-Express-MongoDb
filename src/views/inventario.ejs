@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+   <head>
+    
+      <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″ />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>COUW | Inventario</title>
+      <%- include('partials/head') %>
+      <%- include('partials/nav') %>
+   </head>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <body onload="mostrarCartas(); actualizarParaGuardar(); mostrarleLosStickersQueTiene();" >
+      <br>  
+      <br>  
+      <br>  
+      <div class="container">
+         <header class="text-center">
+            <h1>Inventario</h1>
+            <button class="pushy__btn pushy__btn--sm pushy__btn--green" id="botonDeGuardar" onclick="botonEnviarInventario();">Guardar</button>
+            <button class="pushy__btn pushy__btn--sm pushy__btn--red" onclick="volverPerfil();">Volver</button>
+            <a style="display: none;" id="botonModalSticker" href="#openModal">Lanzar el modal</a>
+            <div id="openModal" class="modalDialog">
+               <div>
+                  <a href="#close" id="botonModalCerrar" title="Close" class="close">X</a>
+                  <div id="cartaParaPegarleStickerModal"></div>
+                  <div id="stickersDisponiblesModal" class="estiloStickersDisponibles"></div>
+               </div>
+            </div>
+            <form id="formInventario" action="/guardarInventario/<%=user._id%>" method="POST">
+               <div class="form-group" style="display: none;">                    
+                  <input type="text" id="mazoUsuario" name="mazoUsuario" class="form-control" >                  
+                  <input type="text" id="todasLasCartasUsuario" name="todasLasCartasUsuario" class="form-control"> 
+                  <input type="text" id="cantidadStickerAtaqueX2" name="cantidadStickerAtaqueX2" class="form-control" value="<%-user.cantidadStickerAtaqueX2%>"> 
+                  <input type="text" id="cantidadStickerDefensaX2" name="cantidadStickerDefensaX2" class="form-control" value="<%-user.cantidadStickerDefensaX2%>" > 
+                  <input type="text" id="cantidadStickerAtaqueX3" name="cantidadStickerAtaqueX3" class="form-control" value="<%-user.cantidadStickerAtaqueX3%>"> 
+                  <input type="text" id="cantidadStickerDefensaX3" name="cantidadStickerDefensaX3" class="form-control" value="<%-user.cantidadStickerDefensaX3%>"> 
+                  <input type="text" id="cantidadStickerAtaqueX4" name="cantidadStickerAtaqueX4" class="form-control" value="<%-user.cantidadStickerAtaqueX4%>"> 
+                  <input type="text" id="cantidadStickerDefensaX4" name="cantidadStickerDefensaX4" class="form-control" value="<%-user.cantidadStickerDefensaX4%>"> 
+                  <input type="text" id="cantidadStickerAtaqueX5" name="cantidadStickerAtaqueX5" class="form-control" value="<%-user.cantidadStickerAtaqueX5%>"> 
+                  <input type="text" id="cantidadStickerDefensaX5" name="cantidadStickerDefensaX5" class="form-control" value="<%-user.cantidadStickerDefensaX5%>"> 
+                  <input type="text" id="cantidadStickerAtaqueX6" name="cantidadStickerAtaqueX6" class="form-control" value="<%-user.cantidadStickerAtaqueX6%>"> 
+                  <input type="text" id="cantidadStickerDefensaX6" name="cantidadStickerDefensaX6" class="form-control" value="<%-user.cantidadStickerDefensaX6%>" > 
+               </div>
+            </form>
+         </header>
+      
+            <div class="card text-center mt-5">
+               <div class="card-body padding-card-body">
+                  <h1>Tu mazo actual</h1>
+                  <p id="textoAMostrar"></p> 
+                  <p id="cartasEnElMazo"></p>
+                
+                     <table class="table table-responsive table-striped">
+                        <thead>
+                           <tr>
+                              <th>N° Carta</th>
+                              <th>Imagen</th>
+                              <th>Nombre</th>
+                              <th>Descripcion</th>
+                              <th>Ataque</th>
+                              <th>Defensa</th>
+                              <th>+Vida</th>
+                              <th>Mov. Horizontal</th>
+                              <th>Mov. Vertical</th>
+                              <th>Mov. Diagonal</th>
+                              <th>Tipo</th>
+                              <th>Sticker Ataque</th>
+                              <th>Sticker Defensa</th>
+                              <th>Precio</th>
+                              <th>Pegar Sticker</th>
+                              <th>SACAR</th>
+                           </tr>
+                        </thead>
+                        <tbody id="mazoDelUsuario">                                                                        
+                        </tbody>
+                     </table>
+            
+                  <!-- fin tabla--> 
+                  <br>
+                  <h1>Tus cartas extras</h1>
+                 
+                  <table class="table table-responsive table-striped">
+                        <thead>
+                           <tr>
+                              <th>N° Carta</th>
+                              <th>Imagen</th>
+                              <th>Nombre</th>
+                              <th>Descripcion</th>
+                              <th>Ataque</th>
+                              <th>Defensa</th>
+                              <th>+Vida</th>
+                              <th>Mov. Horizontal</th>
+                              <th>Mov. Vertical</th>
+                              <th>Mov. Diagonal</th>
+                              <th>Tipo</th>
+                              <th>Sticker Ataque</th>
+                              <th>Sticker Defensa</th>
+                              <th>Precio</th>
+                              <th>Pegar Sticker</th>
+                              <th>AGREGAR</th>
+                           </tr>
+                        </thead>
+                        <tbody id="todasLasCartasDelUsuario">
+                        </tbody>
+                      </table>
+                      <p id="noTienesCartasExtra">(No tienes cartas extras)</p>
+                
+                  <!-- fin tabla--> 
+                  <h1>Todos tu Stickers</h1>
+                  <p id="noTienesStickers">(No tienes Stickers)</p>
+                  <p id="mostrarCantidadDeStickersAtaqueX2"></p>
+                  <p id="mostrarCantidadDeStickersAtaqueX3"></p>
+                  <p id="mostrarCantidadDeStickersAtaqueX4"></p>
+                  <p id="mostrarCantidadDeStickersAtaqueX5"></p>
+                  <p id="mostrarCantidadDeStickersAtaqueX6"></p>
+                  <p id="mostrarCantidadDeStickersDefensaX2"></p>
+                  <p id="mostrarCantidadDeStickersDefensaX3"></p>
+                  <p id="mostrarCantidadDeStickersDefensaX4"></p>
+                  <p id="mostrarCantidadDeStickersDefensaX5"></p>
+                  <p id="mostrarCantidadDeStickersDefensaX6"></p>
+               </div>
+            </div>
+      
+      </div>
+      <input type="text" disabled style="display: none;" id="idUsuario" name="idUsuario" value="<%=user._id%>" placeholder="<%=user._id%>" >
+      <script>console.log("¡Cargando cartas!");
+        var mazoJson = JSON.parse('<%- mazoJson %>');
+        var restoDeCartasJson = JSON.parse('<%- restoDeCartasJson %>');
+        var esUnArray = Array.isArray(mazoJson);
+        
+        function mostrarCartas() {                   
+          document.getElementById("cartasEnElMazo").innerHTML = mazoJson.length + "/20";
+          $("#mazoDelUsuario").empty();
+          $("#todasLasCartasDelUsuario").empty();        
+          for (var i = 0; i < mazoJson.length; i++) {        
+            crearTr = document.createElement('tr');
+            crearTr.setAttribute("id", "linea" + [i]);
+            document.getElementById("mazoDelUsuario").appendChild(crearTr);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].idCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("img");
+            node.src = "/img/cartas/" + mazoJson[i].imagenCarta + ".png";
+            node.width = "50";
+            node.height = "50";
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].nombreCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].descripcionCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].ataqueCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].defensaCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].puntosCuraJugador);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].casillerosMovimientoHorizontal);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].casillerosMovimientoVertical);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].casillerosMovimientoDiagonal);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].tipoCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);        
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].stickerAtaque);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].stickerDefensa);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(mazoJson[i].precioCarta);
+            node.appendChild(textnode);
+            document.getElementById("linea" + [i]).appendChild(node);       
+        
+            var sacarDesdeParaSticker = "mazo";
+            var node = document.createElement("td");
+            var button = document.createElement("button");
+            button.innerHTML = 'Sticker';
+            button.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue");
+            button.setAttribute("onclick", "pegarSticker(" + i + "," + JSON.stringify(sacarDesdeParaSticker) + ")");
+            node.appendChild(button);
+            document.getElementById("linea" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var button = document.createElement("button");
+            button.innerHTML = 'Sacar';
+            button.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue");
+            button.setAttribute("onclick", "sacarCartaDelMazo(" + i + ")");
+            node.appendChild(button);
+            document.getElementById("linea" + [i]).appendChild(node);        
+          }  
+          
+          if(restoDeCartasJson.length != 0){ document.getElementById("noTienesCartasExtra").innerHTML = ""; }
+
+          for (var i = 0; i < restoDeCartasJson.length; i++) {        
+            crearTr = document.createElement('tr');
+            crearTr.setAttribute("id", "lineaResto" + [i]);
+            document.getElementById("todasLasCartasDelUsuario").appendChild(crearTr);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].idCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("img");
+            node.src = "/img/cartas/" + restoDeCartasJson[i].imagenCarta + ".png";
+            node.width = "50";
+            node.height = "50";
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].nombreCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].descripcionCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].ataqueCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].defensaCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].puntosCuraJugador);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].casillerosMovimientoHorizontal);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].casillerosMovimientoVertical);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].casillerosMovimientoDiagonal);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].tipoCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].stickerAtaque);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].stickerDefensa);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var textnode = document.createTextNode(restoDeCartasJson[i].precioCarta);
+            node.appendChild(textnode);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var sacarDesdeParaSticker = "resto";
+            var node = document.createElement("td");
+            var button = document.createElement("button");
+            button.innerHTML = 'Sticker';
+            button.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue");
+            button.setAttribute("onclick", "pegarSticker(" + i + "," + JSON.stringify(sacarDesdeParaSticker) + ")");
+            node.appendChild(button);
+            document.getElementById("lineaResto" + [i]).appendChild(node);
+        
+            var node = document.createElement("td");
+            var button = document.createElement("button");
+            button.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue");
+            button.innerHTML = 'Agregar';
+            button.setAttribute("onclick", "agregarCartaAlMazo(" + i + ")");
+            node.appendChild(button);
+            document.getElementById("lineaResto" + [i]).appendChild(node);        
+          }        
+        }        
+        function sacarCartaDelMazo(i) {        
+          if (mazoJson.length == 20) {
+            document.getElementById("botonDeGuardar").disabled = false;
+          }        
+          $("#mazoDelUsuario").empty();
+          $("#todasLasCartasDelUsuario").empty();
+          restoDeCartasJson.push(mazoJson[i]);
+          mazoJson.splice(i, 1);
+          mostrarCartas();
+          actualizarParaGuardar();
+          if (mazoJson.length < 20) {
+            document.getElementById("textoAMostrar").innerHTML = "Necesitas 20 cartas en el mazo";
+            document.getElementById("botonDeGuardar").disabled = true;        
+          } else {
+            document.getElementById("textoAMostrar").innerHTML = "";
+            document.getElementById("botonDeGuardar").disabled = false;
+          }
+        }        
+        function agregarCartaAlMazo(i) {        
+          if (mazoJson.length == 20) {
+            document.getElementById("botonDeGuardar").disabled = false;
+            document.getElementById("textoAMostrar").innerHTML = "";
+          }        
+          if (mazoJson.length < 20) {
+            document.getElementById("textoAMostrar").innerHTML = "";        
+            $("#mazoDelUsuario").empty();
+            $("#todasLasCartasDelUsuario").empty();
+            mazoJson.push(restoDeCartasJson[i]);
+            restoDeCartasJson.splice(i, 1);
+            mostrarCartas();
+            actualizarParaGuardar();        
+            if (mazoJson.length == 20) {
+              document.getElementById("botonDeGuardar").disabled = false;
+              document.getElementById("textoAMostrar").innerHTML = "";
+            }        
+          } else {
+            document.getElementById("textoAMostrar").innerHTML = "No podés tener mas de 20 cartas en el mazo";
+          }        
+        }        
+        function pegarSticker(i, sacarDesdeParaSticker) {
+          document.getElementById("cartaParaPegarleStickerModal").innerHTML = "";
+          document.getElementById("stickersDisponiblesModal").innerHTML = "";
+          document.getElementById('botonModalSticker').click();        
+          var cartaAPegarSticker = [];        
+          if (sacarDesdeParaSticker == "mazo") {
+            cartaAPegarSticker.push(mazoJson[i]);
+          }
+          if (sacarDesdeParaSticker == "resto") {
+            cartaAPegarSticker.push(restoDeCartasJson[i]);
+          }        
+          var nombreDeLaCarta = cartaAPegarSticker[0].nombreCarta;
+          //Pasarle el nombre de la carta al modal
+          var nodeSticker = document.createElement("p");
+          var textnodenodeSticker = document.createTextNode(nombreDeLaCarta);
+          nodeSticker.appendChild(textnodenodeSticker);
+          document.getElementById("cartaParaPegarleStickerModal").appendChild(nodeSticker);        
+          //Pasarle la imagen al modal de la carta a la cual se le va a pegar un sticker
+          var nodeStickerImg = document.createElement("img");
+          nodeStickerImg.src = "/img/cartas/" + cartaAPegarSticker[0].imagenCarta + ".png";
+          nodeStickerImg.width = "50";
+          nodeStickerImg.height = "50";
+          document.getElementById("cartaParaPegarleStickerModal").appendChild(nodeStickerImg); 
+          if ((cartaAPegarSticker[0].stickerAtaque == 0) && (cartaAPegarSticker[0].stickerDefensa == 0)) {
+            var cantidadStickerAtaqueX2 = document.getElementById("cantidadStickerAtaqueX2").value;
+            var cantidadStickerAtaqueX3 = document.getElementById("cantidadStickerAtaqueX3").value;
+            var cantidadStickerAtaqueX4 = document.getElementById("cantidadStickerAtaqueX4").value;
+            var cantidadStickerAtaqueX5 = document.getElementById("cantidadStickerAtaqueX5").value;
+            var cantidadStickerAtaqueX6 = document.getElementById("cantidadStickerAtaqueX6").value;
+            var cantidadStickerDefensaX2 = document.getElementById("cantidadStickerDefensaX2").value;
+            var cantidadStickerDefensaX3 = document.getElementById("cantidadStickerDefensaX3").value;
+            var cantidadStickerDefensaX4 = document.getElementById("cantidadStickerDefensaX4").value;
+            var cantidadStickerDefensaX5 = document.getElementById("cantidadStickerDefensaX5").value;
+            var cantidadStickerDefensaX6 = document.getElementById("cantidadStickerDefensaX6").value; 
+            if (cantidadStickerAtaqueX2 != 0) {
+              console.log("hay sticker at 2");
+              var tipoDeStickerAPegar = "cantidadStickerAtaqueX2";
+              var tipoStickerGeneral = "stickerAtaque";
+              var multiplicadorDelSticker = 2;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Ataque X2';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker); 
+            }
+            if (cantidadStickerAtaqueX3 != 0) {
+              console.log("hay sticker at 3");
+              var tipoDeStickerAPegar = "cantidadStickerAtaqueX3";
+              var tipoStickerGeneral = "stickerAtaque";
+              var multiplicadorDelSticker = 3;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Ataque X3';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);        
+            }
+            if (cantidadStickerAtaqueX4 != 0) {
+              console.log("hay sticker at 4");
+              var tipoDeStickerAPegar = "cantidadStickerAtaqueX4";
+              var tipoStickerGeneral = "stickerAtaque";
+              var multiplicadorDelSticker = 4;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Ataque X4';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);        
+            }
+            if (cantidadStickerAtaqueX5 != 0) {
+              console.log("hay sticker at 5");
+              var tipoDeStickerAPegar = "cantidadStickerAtaqueX5";
+              var tipoStickerGeneral = "stickerAtaque";
+              var multiplicadorDelSticker = 5;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Ataque X5';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);        
+            }
+            if (cantidadStickerAtaqueX6 != 0) {
+              console.log("hay sticker at 6");
+              var tipoDeStickerAPegar = "cantidadStickerAtaqueX6";
+              var tipoStickerGeneral = "stickerAtaque";
+              var multiplicadorDelSticker = 6;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Ataque X6';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);        
+            }        
+            if (cantidadStickerDefensaX2 != 0) {
+              console.log("hay sticker def 2");
+              var tipoDeStickerAPegar = "cantidadStickerDefensaX2";
+              var tipoStickerGeneral = "stickerDefensa";
+              var multiplicadorDelSticker = 2;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Defensa X2';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);        
+            }
+            if (cantidadStickerDefensaX3 != 0) {
+              console.log("hay sticker def 3");
+              var tipoDeStickerAPegar = "cantidadStickerDefensaX3";
+              var tipoStickerGeneral = "stickerDefensa";
+              var multiplicadorDelSticker = 3;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Defensa X3';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);  
+            }
+            if (cantidadStickerDefensaX4 != 0) {
+              console.log("hay sticker def 4");
+              var tipoDeStickerAPegar = "cantidadStickerDefensaX4";
+              var tipoStickerGeneral = "stickerDefensa";
+              var multiplicadorDelSticker = 4;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Defensa X4';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker); 
+            }
+            if (cantidadStickerDefensaX5 != 0) {
+              console.log("hay sticker def 5");
+              var tipoDeStickerAPegar = "cantidadStickerDefensaX5";
+              var tipoStickerGeneral = "stickerDefensa";
+              var multiplicadorDelSticker = 5;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Defensa X5';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker); 
+            }
+            if (cantidadStickerDefensaX6 != 0) {
+              console.log("hay sticker def 6");
+              var tipoDeStickerAPegar = "cantidadStickerDefensaX6";
+              var tipoStickerGeneral = "stickerDefensa";
+              var multiplicadorDelSticker = 6;
+              var buttonSticker = document.createElement("button");
+              buttonSticker.innerHTML = 'Pegar Sticker Defensa X6';
+              buttonSticker.setAttribute("class", "pushy__btn pushy__btn--sm pushy__btn--blue estiloStickersDisponibles");
+              buttonSticker.setAttribute("onclick", "pegarStickerAceptar(" + JSON.stringify(cartaAPegarSticker) + "," + JSON.stringify(tipoDeStickerAPegar) + "," + JSON.stringify(tipoStickerGeneral) + "," + multiplicadorDelSticker + "," + JSON.stringify(sacarDesdeParaSticker) + "," + i + ");");
+              document.getElementById("stickersDisponiblesModal").appendChild(buttonSticker);        
+            }        
+          } else {        
+            if (cartaAPegarSticker[0].stickerAtaque != 0) {
+              var node = document.createElement("p");
+              var textnode = document.createTextNode("Ya tiene un Sticker de Ataque pegado");
+              node.appendChild(textnode);
+              document.getElementById("cartaParaPegarleStickerModal").appendChild(node);
+            }        
+            if (cartaAPegarSticker[0].stickerDefensa != 0) {
+              var node = document.createElement("p");
+              var textnode = document.createTextNode("Ya tiene un Sticker de Defensa pegado");
+              node.appendChild(textnode);
+              document.getElementById("cartaParaPegarleStickerModal").appendChild(node);
+            }        
+          }        
+        }        
+        function pegarStickerAceptar(cartaAPegarSticker, tipoDeStickerAPegar, tipoStickerGeneral, multiplicadorDelSticker, sacarDesdeParaSticker, i) {
+          if (multiplicadorDelSticker == 2) {
+            var numero = "2";
+          }
+          if (multiplicadorDelSticker == 3) {
+            var numero = "3";
+          }
+          if (multiplicadorDelSticker == 4) {
+            var numero = "4";
+          }
+          if (multiplicadorDelSticker == 5) {
+            var numero = "5";
+          }
+          if (multiplicadorDelSticker == 6) {
+            var numero = "6";
+          }        
+          if (tipoStickerGeneral == "stickerAtaque") {
+            cartaAPegarSticker[0].stickerAtaque = numero;
+          }
+          if (tipoStickerGeneral == "stickerDefensa") {
+            cartaAPegarSticker[0].stickerDefensa = numero;
+          }
+          if (sacarDesdeParaSticker == "mazo") {
+            mazoJson.splice(i, 1);
+            mazoJson.push(cartaAPegarSticker[0]);
+          }
+          if (sacarDesdeParaSticker == "resto") {
+            restoDeCartasJson.splice(i, 1);
+            restoDeCartasJson.push(cartaAPegarSticker[0]);
+          }
+          document.getElementById("botonModalCerrar").click();
+          var descontarSticker = document.getElementById(tipoDeStickerAPegar).value;
+          document.getElementById(tipoDeStickerAPegar).value = parseInt(descontarSticker) - 1;        
+          mostrarCartas();
+          actualizarParaGuardar();
+          mostrarleLosStickersQueTiene();        
+        }        
+        function actualizarParaGuardar() {
+          if (mazoJson.length == 20) {
+            document.getElementById("botonDeGuardar").disabled = false;
+            document.getElementById("textoAMostrar").innerHTML = "";
+          }
+          document.getElementById("todasLasCartasUsuario").innerHTML = "";
+          document.getElementById("mazoUsuario").innerHTML = "";        
+          document.getElementById("todasLasCartasUsuario").value = JSON.stringify(restoDeCartasJson);
+          document.getElementById("mazoUsuario").value = JSON.stringify(mazoJson);
+        }        
+        function mostrarleLosStickersQueTiene() { 
+                                
+
+          if (document.getElementById("cantidadStickerAtaqueX2").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersAtaqueX2").innerHTML = "Stickers Ataque X2: " + document.getElementById("cantidadStickerAtaqueX2").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerDefensaX2").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersDefensaX2").innerHTML = "Stickers Defensa X2: " + document.getElementById("cantidadStickerDefensaX2").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerAtaqueX3").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersAtaqueX3").innerHTML = "Stickers Ataque X3: " + document.getElementById("cantidadStickerAtaqueX3").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerDefensaX3").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersDefensaX3").innerHTML = "Stickers Defensa X3: " + document.getElementById("cantidadStickerDefensaX3").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerAtaqueX4").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersAtaqueX4").innerHTML = "Stickers Ataque X4: " + document.getElementById("cantidadStickerAtaqueX4").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerDefensaX4").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersDefensaX4").innerHTML = "Stickers Defensa X4: " + document.getElementById("cantidadStickerDefensaX4").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerAtaqueX5").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersAtaqueX5").innerHTML = "Stickers Ataque X5: " + document.getElementById("cantidadStickerAtaqueX5").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerDefensaX5").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersDefensaX5").innerHTML = "Stickers Defensa X5: " + document.getElementById("cantidadStickerDefensaX5").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerAtaqueX6").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersAtaqueX6").innerHTML = "Stickers Ataque X6: " + document.getElementById("cantidadStickerAtaqueX6").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }        
+          if (document.getElementById("cantidadStickerDefensaX6").value != 0) {
+            document.getElementById("mostrarCantidadDeStickersDefensaX6").innerHTML = "Stickers Defensa X6: " + document.getElementById("cantidadStickerDefensaX6").value;
+            document.getElementById("noTienesStickers").innerHTML = "";  
+          }   
+        
+        }
+
+
+
+        
+      </script>
+
+
+</body>
+</html>

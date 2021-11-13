@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="stylesheet" href="/css/juego.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COUW | Partida</title>
+    <script type="text/javascript" src="/js/ia.js"></script>
+    <%- include('partials/head') %>
+  
+</head>
+<body>    
+    <br>  
+    <div class="container text-center" id="perdiste" style="display: none;"> <br>  <br><br>  <br>  <h1>Perdiste</h1></div> 
+    <div class="container text-center" id="ganaste" style="display: none;"> <br>  <br><br>  <br>  <h1>Ganaste</h1></div>
+    <div class="stars"></div>
+    <div class="container" id="eljuego">        
+              <div class="campoDeBatalla" id="campoDeBatalla"></div>
+              <br>
+                <div class="contenedorInfoPartida">
+                    <p id="accionesTurnoPj" class="datoInfoPartida">Movimientos: 5/5</p>
+                    <p class="datoInfoPartida">Vida CPU:</p>
+                    <div class="datoInfoPartida" id="vidaCpu">20</div>  
+                    <p class="datoInfoPartida">Vida PJ:</p>
+                    <div class="datoInfoPartida" id="vidaPJ">20</div> 
+                    <p id="turnoActualTexto" class="datoInfoPartida">Tu turno</p>
+                    <p id="roundInfo" class="datoInfoPartida">Round: 1</p>
+                </div>         
+                <div class="infoCartaTexto text-center" id="infoCartaTexto"></div>
+                <div style="margin: auto; width: 5%;">
+                    <img style="display: none;" id="infoCartaImagen" width="50px" height="50px">
+                </div>     
+        <div class="manoDelPj" id="manoDelPj"></div>        
+        
+        
+  
+        
+      
+        
+        <button  style="outline: none;" class="mazoEstilo animate__animated animate__fadeIn" onclick="sacarDelMazo(); sonidoBoton();"></button>
+        <button style="outline: none;" class="pasarDeTurnoEstilo animate__animated animate__fadeIn" onclick="pasarDeTurno(); sonidoBoton(); ia();"></button>
+    </div>    
+
+    <input type="text" disabled style="display: none;" id="idUsuario" name="idUsuario" value="<%=user._id%>" placeholder="<%=user._id%>" >
+</body>
+</html>
+
+
+<script>
+var vidaPJ = 20;    
+var vidaCpu = 20;    
+var round = 1;
+var manoCpu = [];    
+var banderaProcedencia = 0;
+var turnoJugador = 1;
+var accionesTurnoPj = 5;
+var accionesTurnoCpu = 5;
+var mazoCpu = JSON.parse('<%- mazoCpu %>'); 
+//Referente a cartas jugador    
+var informacionSobreCuadradoProcedenciaCarta = 0;
+var mazoJson = JSON.parse('<%- mazoJson %>');  
+var mazoMezcla = [...mazoJson];
+var cartasDeLaMano = []; 
+var cartaActualEnMano = [];
+// Mezclar mazo
+for (let i = mazoMezcla.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mazoMezcla[i], mazoMezcla[j]] = [mazoMezcla[j], mazoMezcla[i]];
+}  
+// Mezclar mazo Cpu
+for (let i = mazoCpu.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mazoCpu[i], mazoCpu[j]] = [mazoCpu[j], mazoCpu[i]];
+} 
+//Referente al tablero
+var campoDeBatallaID = document.getElementById("campoDeBatalla");
+var vidaCpuId = document.getElementById("vidaCpu");
+var vidaPJId = document.getElementById("vidaPJ");
+var manoDelPjID = document.getElementById("manoDelPj");
+var accionesTurnoPjID = document.getElementById("accionesTurnoPj");
+var filas = 9;
+var columnas = 9;
+var cantidadCasilleros = filas * columnas;
+var campoDeBatalla = [];  
+var cuadrado = {};
+for (var i = 0; i < cantidadCasilleros; i++) {  
+    var terrenoRandomOpuesto = 1;
+    var terrenoRandom = Math.floor(Math.random() * (2));
+    if (terrenoRandom == 1 ){terrenoRandomOpuesto = 0}              
+    var cuadrado = {    
+        "id": i,         
+        "tipoDeTerreno": terrenoRandom,
+        "bonoAtaqueTerreno":terrenoRandom,
+        "bonoDefensaTerreno":terrenoRandomOpuesto,
+        "estado": "normal",
+        "ocupadaCPU": 0,
+        "ocupadaPJ": 0,
+        "baseCPU": 0,
+        "basePj": 0,
+        "carta":[]                                                                               
+        };
+    campoDeBatalla.push(cuadrado);       
+    var button = document.createElement("button");
+    button.innerHTML = '';   
+
+    if(terrenoRandom != 0){
+        button.setAttribute("class", "cuadrado animate__animated animate__flash");
+    }else{
+        button.setAttribute("class", "cuadrado2 animate__animated animate__flash");} 
+
+    button.setAttribute("id", "cuadradoId" + i);
+    button.style.outline = "none";
+    button.setAttribute("onclick", "hacerClicEnCuadrado(" + i + ")");
+    button.setAttribute("onmouseover", "mostrarInformacionCuadrado(" + i + ")");
+    campoDeBatallaID.appendChild(button);
+}
+dibujarBasesJugadores();
+function sacarDelMazo(){
+    if (turnoJugador == 1 && cartasDeLaMano.length == 0 && mazoMezcla.length > 5 && accionesTurnoPj != 0){
+        for(var i=0; i<5;i++){
+            cartasDeLaMano.push(mazoMezcla[i]);
+            mazoMezcla.splice(i,1);        
+        }
+    }  
+    if (turnoJugador == 1 && cartasDeLaMano.length == 0 && mazoMezcla.length == 5 && accionesTurnoPj != 0){
+        for(var i=0; i<5;i++){
+            cartasDeLaMano.push(mazoMezcla[i]);                  
+        }
+        mazoMezcla = [];
+    } 
+    crearCartasParaPj();
+}
+function crearCartasParaPj(){
+    manoDelPjID.innerHTML = "";
+    for(var i=0;i<cartasDeLaMano.length;i++){
+        var button = document.createElement("button");       
+        button.innerHTML = cartasDeLaMano[i].nombreCarta;   
+        button.style.backgroundImage  = "url('/img/cartas/" + cartasDeLaMano[i].imagenCarta + ".png')";
+        button.style.backgroundSize= "contain"; 
+        button.style.backgroundRepeat= "no-repeat"; 
+        button.style.backgroundPosition= "center"; 
+    
+        button.setAttribute("class", "cartasParaPj animate__animated animate__fadeIn");
+        button.setAttribute("id", "cartasParaPjId" + i);
+        button.setAttribute("onclick", "levantarCarta(" + i + ")");
+        manoDelPjID.appendChild(button);
+    }
+}
+function levantarCarta(i){
+    if (turnoJugador == 1 && accionesTurnoPj != 0){       
+        mostrarMovimientosDisponiblesAlIncorporarCartaAlTablero();
+        cartaActualEnMano = []; 
+        cartaActualEnMano.length = 0;        
+        cartaActualEnMano.push(cartasDeLaMano[i]);
+        cartasDeLaMano.splice(i, 1);  
+        banderaProcedencia = 1;  
+        
+    }   
+    crearCartasParaPj();   
+}
+function hacerClicEnCuadrado(i){     
+    if(cartaActualEnMano.length == 0 && turnoJugador == 1 && accionesTurnoPj != 0){
+        
+        banderaProcedencia = 0; 
+        var efectoBoton = document.getElementById("cuadradoId" + i);
+        if (campoDeBatalla[i].bonoAtaqueTerreno == 1){
+        efectoBoton.setAttribute("class", "cuadrado animate__animated animate__flash");}else{
+            efectoBoton.setAttribute("class", "cuadrado2 animate__animated animate__flash");  
+        } 
+    } 
+    if ((cartaActualEnMano.length != 0) && (campoDeBatalla[i].carta != 0) && (campoDeBatalla[i].ocupadaCPU == 1) && banderaProcedencia == 1 && turnoJugador == 1 && (campoDeBatalla[i].baseCPU != 1) && accionesTurnoPj != 0){    
+        //Tengo una carta en la mano, y donde hice clic hay carta puesta enemiga    
+        var cartaAtacada = i;
+        var informacionSobreCartaEnManoAtacante=[];
+        informacionSobreCartaEnManoAtacante.push(cartaActualEnMano[0]);
+        var cartaAtacante = informacionSobreCartaEnManoAtacante;
+        pjAtacaCpu(cartaAtacante, cartaAtacada, informacionSobreCuadradoProcedenciaCarta);        
+        cartaActualEnMano = [];            
+        accionesTurnoPj = accionesTurnoPj - 1;       
+        sonidoBoton();                     
+        dibujarTableroConCartasActuales();    
+    }
+    if ((cartaActualEnMano.length != 0) && (campoDeBatalla[i].carta == 0) && banderaProcedencia == 1 && turnoJugador == 1 && (campoDeBatalla[i].baseCPU != 1) && accionesTurnoPj != 0){    
+        //Tengo una carta en la mano, y donde hice clic no hay carta puesta     
+       
+        var x = campoDeBatalla[i].carta;
+        x.push(cartaActualEnMano[0]);
+        campoDeBatalla[i].ocupadaPJ = 1;           
+        cartaActualEnMano = [];            
+        accionesTurnoPj = accionesTurnoPj - 1;  
+        var efectoBoton = document.getElementById("cuadradoId" + i);
+        if (campoDeBatalla[i].bonoAtaqueTerreno == 1){
+        efectoBoton.setAttribute("class", "cuadrado animate__animated animate__flash");}else{
+            efectoBoton.setAttribute("class", "cuadrado2 animate__animated animate__flash");  
+        } 
+        sonidoBoton();                     
+        dibujarTableroConCartasActuales();    
+    }
+    if ((cartaActualEnMano.length != 0) && (campoDeBatalla[i].baseCPU == 1)&& banderaProcedencia == 1 && turnoJugador == 1 && accionesTurnoPj != 0){    
+        //Tengo una carta en la mano, y donde hice clic no hay carta puesta y es base enemiga    
+        vidaCpu = vidaCpu - (parseInt(cartaActualEnMano[0].ataqueCarta) + parseInt(cartaActualEnMano[0].stickerAtaque) + campoDeBatalla[informacionSobreCuadradoProcedenciaCarta].bonoAtaqueTerreno);        
+        vidaCpuId.innerHTML = vidaCpu;    
+     
+        console.log("Atacaste base CPU, causando daño ", (parseInt(cartaActualEnMano[0].ataqueCarta) + parseInt(cartaActualEnMano[0].stickerAtaque) + campoDeBatalla[informacionSobreCuadradoProcedenciaCarta].bonoAtaqueTerreno ));
+        console.log(campoDeBatalla);
+        var x = campoDeBatalla[informacionSobreCuadradoProcedenciaCarta].carta;
+        x.push(cartaActualEnMano[0]);    
+        campoDeBatalla[informacionSobreCuadradoProcedenciaCarta].ocupadaPJ = 1;    
+        cartaActualEnMano = [];            
+        accionesTurnoPj = accionesTurnoPj - 1;  
+        var efectoBoton = document.getElementById("cuadradoId" + i);
+       
+        if (campoDeBatalla[4].bonoAtaqueTerreno == 1){
+        efectoBoton.setAttribute("class", "cuadrado animate__bounceIn");}else{
+            efectoBoton.setAttribute("class", "cuadrado2 animate__bounceIn");  
+        }  
+        sonidoBoton();                    
+        dibujarTableroConCartasActuales();    
+    }
+    if(cartaActualEnMano.length == 0 && campoDeBatalla[i].carta != 0 && campoDeBatalla[i].ocupadaPJ == 1 && banderaProcedencia == 0 && turnoJugador == 1  && (campoDeBatalla[i].baseCPU != 1) && accionesTurnoPj != 0){
+        //no tengo una carta en la mano, y donde hice clic hay carta puesta (y es del Pj!!)  
+        informacionSobreCuadradoProcedenciaCarta = i;             
+        cartaActualEnMano.push(campoDeBatalla[i].carta[0]); 
+        var infoDeLaCartaQueTenesEnMano = campoDeBatalla[i].carta[0];        
+        campoDeBatalla[i].ocupadaPJ = 0;                  
+        campoDeBatalla[i].carta = [];          
+        banderaProcedencia = 1;       
+
+        //Tomar valores para poder pasar a otras funciones:
+        var movCartaDiag = infoDeLaCartaQueTenesEnMano.casillerosMovimientoDiagonal;
+        var movCartaHor = infoDeLaCartaQueTenesEnMano.casillerosMovimientoHorizontal;
+        var movCartaVer = infoDeLaCartaQueTenesEnMano.casillerosMovimientoVertical;
+        dibujarTableroConCartasActuales(); 
+        sonidoBoton();
+        mostrarMovimientosDisponibles(i,movCartaDiag,movCartaHor,movCartaVer);
+    }   
+}
+function dibujarTableroConCartasActuales(){   
+    accionesTurnoPjID.innerHTML = "Movimientos: "+ accionesTurnoPj + "/5" ;
+    if(accionesTurnoPj == 0){
+        accionesTurnoPjID.innerHTML = "No te quedan mas movimientos";
+    }  
+    //Borrar movimientos disponibles
+    for(var i=0; i<campoDeBatalla.length; i++){
+    var x = document.getElementById("cuadradoId" + i);
+      x.style.background = "";
+    }    
+    //Volver a habilitar botones del campo de juego
+    for(var j=0; j<campoDeBatalla.length; j++){
+        var x = document.getElementById("cuadradoId" + j);
+         x.disabled = false;       
+    }
+    for(var i=0; i<campoDeBatalla.length; i++){
+        if(campoDeBatalla[i].carta != 0){
+            var infoCarta = campoDeBatalla[i].carta;           
+            document.getElementById("cuadradoId"+i).style.backgroundImage  = "url('/img/cartas/" + infoCarta[0].imagenCarta + ".png')";
+            document.getElementById("cuadradoId"+i).style.backgroundSize= "cover";               
+            //Si la carta es del jugador pintar de verde el fondo para identificarla
+            if(campoDeBatalla[i].ocupadaPJ == 1){
+                document.getElementById("cuadradoId"+i).style.backgroundColor  = "#55df55";
+            }
+        }else{
+            document.getElementById("cuadradoId"+i).innerHTML = "";        
+        }
+    }
+    dibujarBasesJugadores(); 
+    condicionesDeVictoriaODerrota();
+}
+function dibujarBasesJugadores(){ 
+    vidaPJId.innerHTML = vidaPJ;
+    vidaCpuId.innerHTML = vidaCpu;
+    var baseCpu = document.getElementById("cuadradoId4");
+    baseCpu.style.backgroundImage  = "url('/img/tablero/base.png')";
+    baseCpu.style.backgroundSize= "cover";
+    campoDeBatalla[4].baseCPU = 1;
+    var basePJ = document.getElementById("cuadradoId76");
+    basePJ.style.backgroundImage  = "url('/img/tablero/base.png')";
+    basePJ.style.backgroundSize= "cover";
+    basePJ.style.backgroundColor  = "#55df55";
+    campoDeBatalla[76].basePJ = 1;
+}
+function mostrarMovimientosDisponibles(i,movCartaDiag,movCartaHor,movCartaVer){
+    var idDelCuadradoRecibido = i;   
+    //Para que siga mostrando la imagen de la carta cuando miras donde moverla:      
+    var casilleroActual = document.getElementById("cuadradoId" + i);
+    var infoCarta = cartaActualEnMano[0];
+    casilleroActual.style.backgroundImage  = "url('/img/cartas/" + infoCarta.imagenCarta + ".png')";
+    casilleroActual.style.backgroundSize= "cover"; 
+    
+    //Deshabilitar TODOS los botones del campo de batalla
+    for(var j=0; j<campoDeBatalla.length; j++){
+    var x = document.getElementById("cuadradoId" + j);
+        x.disabled = true;       
+    }  
+    //habilitar casillero vertical (teniendo en cuenta los limites del tablero) 
+    if(idDelCuadradoRecibido != 0 && idDelCuadradoRecibido != 1 && idDelCuadradoRecibido != 2 && idDelCuadradoRecibido != 3 && idDelCuadradoRecibido != 4 && idDelCuadradoRecibido != 5 && idDelCuadradoRecibido != 6 && idDelCuadradoRecibido != 7 &&idDelCuadradoRecibido != 8 ){  
+        //Casos especiales cuando la pieza se puede mover mas de 1 casillero y estaria "teletransportandose" sin estas condiciones:
+        var tempVar = movCartaVer;
+        if((idDelCuadradoRecibido == 9 || idDelCuadradoRecibido == 10 || idDelCuadradoRecibido == 11 || idDelCuadradoRecibido == 12 || idDelCuadradoRecibido == 13 || idDelCuadradoRecibido == 14 || idDelCuadradoRecibido == 15 || idDelCuadradoRecibido == 16 || idDelCuadradoRecibido == 17) && movCartaVer > 1){movCartaVer -= 1;}
+        for(var w=0; w<movCartaVer; w++){
+            var chequearExistencia = "cuadradoId" + (idDelCuadradoRecibido - (9 * (movCartaVer - w)));         
+            if (typeof(chequearExistencia) != 'undefined' && chequearExistencia != null && !(chequearExistencia<0)){            
+                var casilleroDisponibleVertical = document.getElementById("cuadradoId" + (idDelCuadradoRecibido - (9 * (movCartaVer - w))));
+                casilleroDisponibleVertical.style.backgroundColor = "#00ff62";
+                casilleroDisponibleVertical.disabled = false;   
+            }
+        }
+    movCartaVer = tempVar;
+    }
+    if(idDelCuadradoRecibido != 72 && idDelCuadradoRecibido != 73 && idDelCuadradoRecibido != 74 && idDelCuadradoRecibido != 75 && idDelCuadradoRecibido != 76 && idDelCuadradoRecibido != 77 && idDelCuadradoRecibido != 78 && idDelCuadradoRecibido != 79 &&idDelCuadradoRecibido != 80 ){          
+        //Casos especiales cuando la pieza se puede mover mas de 1 casillero y estaria "teletransportandose" sin estas condiciones:
+        var tempVar = movCartaVer;
+        if((idDelCuadradoRecibido == 63 || idDelCuadradoRecibido == 64 || idDelCuadradoRecibido == 65 || idDelCuadradoRecibido == 66 || idDelCuadradoRecibido == 67 || idDelCuadradoRecibido == 68 || idDelCuadradoRecibido == 69 || idDelCuadradoRecibido == 70 || idDelCuadradoRecibido == 71) && movCartaVer > 1){movCartaVer -= 1;}
+        for(var w=0; w<movCartaVer; w++){   
+            var chequearExistencia = "cuadradoId" + (idDelCuadradoRecibido + (9 * (movCartaVer - w)));    
+            if (typeof(chequearExistencia) != 'undefined' && chequearExistencia != null && !(chequearExistencia<0)){      
+                var casilleroDisponibleVertical = document.getElementById("cuadradoId" + (idDelCuadradoRecibido + (9 * (movCartaVer - w))));
+                casilleroDisponibleVertical.style.backgroundColor = "#00ff62";
+                casilleroDisponibleVertical.disabled = false;   
+            }
+        }
+    movCartaVer = tempVar;
+    }   
+    //habilitar casillero horizontal (teniendo en cuenta los limites del tablero) 
+    if(idDelCuadradoRecibido != 8 && idDelCuadradoRecibido != 17 && idDelCuadradoRecibido != 26 && idDelCuadradoRecibido != 35 && idDelCuadradoRecibido != 44 && idDelCuadradoRecibido != 53 && idDelCuadradoRecibido != 62 && idDelCuadradoRecibido != 71 &&idDelCuadradoRecibido != 80 ){    
+        //Casos especiales cuando la pieza se puede mover mas de 1 casillero y estaria "teletransportandose" sin estas condiciones:
+        var tempVar = movCartaHor;
+        if((idDelCuadradoRecibido == 7 || idDelCuadradoRecibido == 16 || idDelCuadradoRecibido == 25 || idDelCuadradoRecibido == 34 || idDelCuadradoRecibido == 43 || idDelCuadradoRecibido == 52 || idDelCuadradoRecibido == 61 || idDelCuadradoRecibido == 70 || idDelCuadradoRecibido == 79) && movCartaHor > 1){movCartaHor -= 1;}
+        for(var w=0; w<movCartaHor; w++){ 
+            var chequearExistencia = "cuadradoId" + (idDelCuadradoRecibido + (movCartaHor - w)); 
+            if (typeof(chequearExistencia) != 'undefined' && chequearExistencia != null && !(chequearExistencia<0)){    
+                var casilleroDisponibleHorizontal = document.getElementById("cuadradoId" + (idDelCuadradoRecibido + (movCartaHor - w)));
+                casilleroDisponibleHorizontal.style.backgroundColor = "#00ff62";
+                casilleroDisponibleHorizontal.disabled = false; 
+            }  
+        }
+    movCartaHor = tempVar;
+    }    
+    if(idDelCuadradoRecibido != 0 && idDelCuadradoRecibido != 9 && idDelCuadradoRecibido != 18 && idDelCuadradoRecibido != 27 && idDelCuadradoRecibido != 36 && idDelCuadradoRecibido != 45 && idDelCuadradoRecibido != 54 && idDelCuadradoRecibido != 63 &&idDelCuadradoRecibido != 72 ){
+        //Casos especiales cuando la pieza se puede mover mas de 1 casillero y estaria "teletransportandose" sin estas condiciones:
+        var tempVar = movCartaHor;
+        if((idDelCuadradoRecibido == 1 || idDelCuadradoRecibido == 10 || idDelCuadradoRecibido == 19 || idDelCuadradoRecibido == 28 || idDelCuadradoRecibido == 37 || idDelCuadradoRecibido == 46 || idDelCuadradoRecibido == 55 || idDelCuadradoRecibido == 64 || idDelCuadradoRecibido == 73) && movCartaHor > 1){movCartaHor -= 1;}
+        for(var w=0; w<movCartaHor; w++){  
+            var chequearExistencia = "cuadradoId" + (idDelCuadradoRecibido - (movCartaHor - w)); 
+            if (typeof(chequearExistencia) != 'undefined' && chequearExistencia != null && !(chequearExistencia<0)){           
+                var casilleroDisponibleHorizontal = document.getElementById("cuadradoId" + (idDelCuadradoRecibido - (movCartaHor - w)));
+                casilleroDisponibleHorizontal.style.backgroundColor = "#00ff62";
+                casilleroDisponibleHorizontal.disabled = false; 
+            }  
+        } 
+    movCartaHor = tempVar;    
+    }
+    //habilitar casilleros diagonales (teniendo en cuenta los limites del tablero) 
+    //los de arriba
+        for(var w=0; w<movCartaDiag; w++){
+            var chequearExistencia = ((idDelCuadradoRecibido - 1 * movCartaDiag) - (9 * (1 * movCartaDiag - w) - w)); 
+            var chequearExistencia2 = ((idDelCuadradoRecibido + 1 * movCartaDiag) - (9 * (1 * movCartaDiag - w) + w)); 
+            var tempVar = movCartaDiag;
+            if(idDelCuadradoRecibido != 0 && idDelCuadradoRecibido != 1 && idDelCuadradoRecibido != 2 && idDelCuadradoRecibido != 3 && idDelCuadradoRecibido != 4 && idDelCuadradoRecibido != 5 && idDelCuadradoRecibido != 6 && idDelCuadradoRecibido != 7 && idDelCuadradoRecibido != 8 ){
+            //Arriba izquierda
+            //evitar teletransportacion:
+                if(idDelCuadradoRecibido == 18 || idDelCuadradoRecibido == 27 || idDelCuadradoRecibido == 36 || idDelCuadradoRecibido == 45 || idDelCuadradoRecibido == 54 || idDelCuadradoRecibido == 63|| idDelCuadradoRecibido == 72){  movCartaDiag = 0; }
+                if(idDelCuadradoRecibido == 28|| idDelCuadradoRecibido == 37|| idDelCuadradoRecibido == 46||idDelCuadradoRecibido == 55 || idDelCuadradoRecibido == 73 || idDelCuadradoRecibido == 64){  movCartaDiag = 1; }
+                            if ((chequearExistencia != null) && !(chequearExistencia<0) && idDelCuadradoRecibido != 72 ){            
+                                var casilleroDisponibleDiagonal = document.getElementById("cuadradoId" + ((idDelCuadradoRecibido - 1 * movCartaDiag) - (9 * (1 * movCartaDiag - w) - w)));
+                                casilleroDisponibleDiagonal.style.backgroundColor = "#00ff62";
+                                casilleroDisponibleDiagonal.disabled = false;     
+                            }
+                movCartaDiag = tempVar;   
+            //Arriba derecha
+            if(idDelCuadradoRecibido == 79 || idDelCuadradoRecibido == 16 || idDelCuadradoRecibido == 25  || idDelCuadradoRecibido == 34|| idDelCuadradoRecibido == 35 || idDelCuadradoRecibido == 43 || idDelCuadradoRecibido == 52 || idDelCuadradoRecibido == 61 || idDelCuadradoRecibido == 70){  movCartaDiag = 1; }
+            if(idDelCuadradoRecibido == 17 || idDelCuadradoRecibido == 26|| idDelCuadradoRecibido == 35|| idDelCuadradoRecibido == 44|| idDelCuadradoRecibido == 53 ||  idDelCuadradoRecibido == 62 ||idDelCuadradoRecibido == 71 || idDelCuadradoRecibido == 80){  movCartaDiag = 0; }
+                            if (typeof(chequearExistencia2) != 'undefined' && chequearExistencia2 != null && !(chequearExistencia2<0) ){
+                                var casilleroDisponibleDiagonal2 = document.getElementById("cuadradoId" + ((idDelCuadradoRecibido + 1 * movCartaDiag) - (9 * (1 * movCartaDiag - w) + w)));
+                                casilleroDisponibleDiagonal2.style.backgroundColor = "#00ff62";
+                                casilleroDisponibleDiagonal2.disabled = false;   
+                            }  
+            movCartaDiag = tempVar; 
+            }                           
+        }  
+    //los de abajo
+        for(var w=0; w<movCartaDiag ; w++){  
+            var casilleroDisponibleDiagonal = ((idDelCuadradoRecibido - 1  * movCartaDiag ) + (9 * (1 * movCartaDiag - w )  + w)); 
+            var casilleroDisponibleDiagonal2 = ((idDelCuadradoRecibido + 1 * movCartaDiag) + (9 * (1 * movCartaDiag - w ) - w));  
+            var tempVar = movCartaDiag;
+            if(idDelCuadradoRecibido != 72 && idDelCuadradoRecibido != 73 && idDelCuadradoRecibido != 74 && idDelCuadradoRecibido != 75 && idDelCuadradoRecibido != 76 && idDelCuadradoRecibido != 77 && idDelCuadradoRecibido != 78 && idDelCuadradoRecibido != 79 && idDelCuadradoRecibido != 80 ){ 
+                            //Abajo Izquierda
+                         //evitar teletransportacion:
+            if(idDelCuadradoRecibido == 1 || idDelCuadradoRecibido == 10 || idDelCuadradoRecibido == 19|| idDelCuadradoRecibido == 28|| idDelCuadradoRecibido == 37||idDelCuadradoRecibido == 46|| idDelCuadradoRecibido == 55||idDelCuadradoRecibido == 64 ){  movCartaDiag = 1; }                
+            if( idDelCuadradoRecibido == 9 ||idDelCuadradoRecibido == 18 || idDelCuadradoRecibido == 27 || idDelCuadradoRecibido == 36 || idDelCuadradoRecibido == 45 || idDelCuadradoRecibido == 54 || idDelCuadradoRecibido == 63 ||  idDelCuadradoRecibido == 72){  movCartaDiag = 0; }                       
+                            if (typeof(casilleroDisponibleDiagonal) != 'undefined' && casilleroDisponibleDiagonal != null && idDelCuadradoRecibido != 0 && !(casilleroDisponibleDiagonal>80)){            
+                                var casilleroDisponibleDiagonal = document.getElementById("cuadradoId" + ((idDelCuadradoRecibido - 1  * movCartaDiag ) + (9 * (1 * movCartaDiag - w )  + w)));
+                                casilleroDisponibleDiagonal.style.backgroundColor = "#00ff62";
+                                casilleroDisponibleDiagonal.disabled = false;     
+                            }
+            movCartaDiag = tempVar;                   
+                        //Abajo Derecha 
+                        if( idDelCuadradoRecibido == 8 || idDelCuadradoRecibido == 17 || idDelCuadradoRecibido == 26 || idDelCuadradoRecibido == 35 || idDelCuadradoRecibido == 44 || idDelCuadradoRecibido == 53 || idDelCuadradoRecibido == 62|| idDelCuadradoRecibido == 71){  movCartaDiag = 0; }                                   
+                        if(idDelCuadradoRecibido == 7 || idDelCuadradoRecibido == 16 || idDelCuadradoRecibido == 25 ||  idDelCuadradoRecibido == 34 || idDelCuadradoRecibido == 43 || idDelCuadradoRecibido == 52 ){  movCartaDiag = 1; }   
+                            if (typeof(casilleroDisponibleDiagonal2) != 'undefined' && casilleroDisponibleDiagonal2 != null && !(casilleroDisponibleDiagonal2>80) ){
+                                var casilleroDisponibleDiagonal2 = document.getElementById("cuadradoId" + ((idDelCuadradoRecibido + 1 * movCartaDiag) + (9 * (1 * movCartaDiag - w ) - w)));
+                                casilleroDisponibleDiagonal2.style.backgroundColor = "#00ff62";
+                                casilleroDisponibleDiagonal2.disabled = false;   
+                            }
+            movCartaDiag = tempVar;  
+            }                
+        }
+    //habilitar casillero actual
+    var casilleroActual = document.getElementById("cuadradoId" + idDelCuadradoRecibido);
+    casilleroActual.style.backgroundColor = "#06d556b8";   
+    casilleroActual.style.backgroundSize = "cover";  
+    casilleroActual.disabled = false; 
+}
+function mostrarInformacionCuadrado(i){
+    if(campoDeBatalla[i].carta != 0 && cartaActualEnMano.length == 0){     
+        var infoCartaId = document.getElementById("infoCartaTexto"); 
+        // var infoCartaImagenId = document.getElementById("infoCartaImagen");   
+        var infoCarta = campoDeBatalla[i].carta;  
+        // infoCartaImagenId .style = "display : block;"        
+        infoCartaId.innerHTML = 
+        "Nombre" + JSON.stringify(infoCarta[0].nombreCarta)+ " " +
+        "Ataque" + JSON.stringify(infoCarta[0].ataqueCarta)+ " " +
+        "Defensa" + JSON.stringify(infoCarta[0].defensaCarta)+ " " +
+        "Sticker Defensa " + JSON.stringify(infoCarta[0].stickerDefensa)+ " " +
+        "Sticker Ataque " + JSON.stringify(infoCarta[0].stickerAtaque)+ " " +
+        "Bono Ataque Terreno " + JSON.stringify(campoDeBatalla[i].bonoAtaqueTerreno)+ " " +
+        "Bono Defensa Terreno " + JSON.stringify(campoDeBatalla[i].bonoDefensaTerreno);
+        // infoCartaImagenId.src = "/img/cartas/" + infoCarta[0].imagenCarta + ".png"; 
+        
+        var infoDelaCartaAIluminar = campoDeBatalla[i].carta[0];     
+    
+        //Tomar valores para poder pasar a funcion iluminarCasillerosDisponibles:
+        var movCartaDiag = infoDelaCartaAIluminar.casillerosMovimientoDiagonal;
+        var movCartaHor = infoDelaCartaAIluminar.casillerosMovimientoHorizontal;
+        var movCartaVer = infoDelaCartaAIluminar.casillerosMovimientoVertical;
+           
+            iluminarCasillerosDisponibles(i,movCartaDiag,movCartaHor,movCartaVer);   
+           
+    }else{
+        document.getElementById("infoCartaTexto").innerHTML = "";
+        // document.getElementById("infoCartaImagen").src = ""; 
+        // document.getElementById("infoCartaImagen").style = "display : none;" 
+            if(cartaActualEnMano.length == 0){
+                dibujarTableroConCartasActuales();  
+
+            }
+                
+    }
+}
+function pasarDeTurno(){
+    turnoJugador = 1-turnoJugador;
+    var turnoJugadorTexto = turnoJugador;
+    if(turnoJugador == 1){turnoJugadorTexto="Tu turno"}else{turnoJugadorTexto="Turno CPU"}
+
+    document.getElementById("turnoActualTexto").innerHTML = turnoJugadorTexto;    
+}
+function mostrarMovimientosDisponiblesAlIncorporarCartaAlTablero(){
+    for(var i=0; i<campoDeBatalla.length; i++){
+        if(campoDeBatalla[i].ocupadaPJ != 1 && campoDeBatalla[i].ocupadaCPU != 1 && campoDeBatalla[i].baseCPU != 1 && campoDeBatalla[i].basePJ != 1){
+            var mostrarDondePuedePonerCarta = document.getElementById("cuadradoId" + i);
+            mostrarDondePuedePonerCarta.style.background = "#00ff62";
+        }    
+    }
+}
+function actualizarNumeroDeRound(){
+    round = round + 1;
+    document.getElementById("roundInfo").innerHTML = "Round: " + round;
+}
+function condicionesDeVictoriaODerrota(){
+
+   var ganasteId = document.getElementById("ganaste");
+   var perdisteId = document.getElementById("perdiste");
+   var juegoId = document.getElementById("eljuego");
+
+    if(manoCpu.length == 0 && mazoCpu.length == 0 && ubicacionCartasCpu.length == 0 && vidaPJ > 0 && vidaCpu <= 0){
+        console.log("Ganaste");
+        juegoId.style = "display: none";
+        ganasteId.style = "display: block";
+    }
+    if(vidaCpu <= 0){
+        console.log("Ganaste");
+        juegoId.style = "display: none";
+        ganasteId.style = "display: block";
+    }
+    if(mazoMezcla.length == 0 && cartasDeLaMano.length == 0 && ubicacionCartasJugador.length == 0){
+        console.log("Perdiste");
+        juegoId.style = "display: none";
+        perdisteId.style = "display: block";
+    }
+    if(vidaPJ <= 0){
+        console.log("Perdiste");
+        juegoId.style = "display: none";
+        perdisteId.style = "display: block";
+    }
+
+}
+
+
+</script>    

@@ -1,0 +1,22 @@
+idCarta,nombreCarta,descripcionCarta,ataqueCarta,defensaCarta,puntosCuraJugador,casillerosMovimientoHorizontal,casillerosMovimientoVertical,casillerosMovimientoDiagonal,tipoCarta,imagenCarta,stickerAtaque,stickerDefensa,precioCarta
+21,Juana,123,1,1,0,1,1,0,normal,21,0,0,1
+22,Lenny,123,2,1,0,1,1,0,normal,22,0,0,2
+23,Lola,123,1,1,0,1,1,0,normal,23,0,0,2
+24,Felipe,123,2,1,0,2,2,0,unica,24,0,0,2
+25,Goku,123,2,1,0,1,1,0,normal,25,0,0,3
+26,Seiya,123,2,1,0,1,1,0,normal,26,0,0,3
+27,Pepe,123,1,1,0,1,1,0,normal,27,0,0,3
+28,Blabla,123,1,1,0,1,1,0,normal,28,0,0,3
+29,Conde,123,1,1,0,1,1,0,normal,29,0,0,4
+30,Bicho,123,1,1,0,1,1,0,normal,30,0,0,4
+31,Coso raro,123,7,6,0,3,3,0,especial,31,0,0,5
+32,Tiburon,123,6,7,0,3,3,0,especial,32,0,0,5
+33,Exraterrestre,123,2,1,0,1,1,0,normal,33,0,0,4
+34,Marciano,123,1,1,0,1,1,0,normal,34,0,0,3
+35,Raton,123,1,1,0,1,1,0,normal,35,0,0,2
+36,Ara�a,123,1,1,0,1,1,0,normal,36,0,0,2
+37,Melon,123,2,1,0,1,1,0,normal,37,0,0,2
+38,Puma,123,2,1,0,1,1,0,normal,38,0,0,2
+39,Oso,123,3,1,0,1,1,0,normal,39,0,0,1
+40,Pez,123,3,1,0,1,1,0,normal,40,0,0,1
+,,,,,,,,,,,,,

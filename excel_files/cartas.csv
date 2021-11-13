@@ -1,0 +1,22 @@
+idCarta,nombreCarta,descripcionCarta,ataqueCarta,defensaCarta,puntosCuraJugador,casillerosMovimientoHorizontal,casillerosMovimientoVertical,casillerosMovimientoDiagonal,tipoCarta,imagenCarta,stickerAtaque,stickerDefensa,precioCarta
+1,soldado,un soldado de caca,1,1,0,1,1,0,normal,1,0,0,1
+2,guerrero,ataca con furia,2,1,0,1,1,0,normal,2,0,0,1
+3,enano,diminuto luchador,1,1,0,1,1,0,normal,3,0,0,1
+4,orco,feroz rival,2,1,0,1,1,0,normal,4,0,0,1
+5,leon,fiera indestructible,2,1,0,1,1,0,normal,5,0,0,1
+6,bicho,extraño ser,2,1,0,1,1,1,normal,6,0,0,2
+7,dragon,lider del cielo,1,1,0,1,1,1,normal,7,0,0,2
+8,aguila,patriarca del viento,1,1,0,1,1,1,normal,8,0,0,2
+9,puerco,asqueroso contrincante,1,1,0,1,1,1,normal,9,0,0,2
+10,gato,fugaz,1,1,0,1,1,1,normal,10,0,0,2
+11,insecto,invisible enemigo,2,1,0,2,2,2,normal,11,0,0,3
+12,pato,mortal y tierno,3,1,0,2,2,2,normal,12,0,0,3
+13,ninja,silencioso asesino,2,1,0,2,2,2,normal,13,0,0,3
+14,samurai,japon te acompaña,1,1,0,2,2,2,normal,14,0,0,3
+15,paladin,leal y combativo,1,1,0,2,2,2,normal,15,0,0,3
+16,mago,destellos de poder,1,1,0,0,0,1,normal,16,0,0,1
+17,brujo,maligno y rabioso,2,1,0,0,0,1,normal,17,0,0,1
+18,hechicero,conjuros y sombras,2,1,0,0,0,1,normal,18,0,0,1
+19,parca,detrás de ti,3,1,0,0,0,1,normal,19,0,0,1
+20,tirano,sin piedad,3,1,0,0,0,1,normal,20,0,0,1
+,,,,,,,,,,,,,

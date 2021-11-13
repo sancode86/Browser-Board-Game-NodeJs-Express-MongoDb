@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>COUW | Galeria</title>
+      <%- include('partials/head') %>
+      <%- include('partials/nav') %>
+   </head>
+   <body>
+      <br>  
+      <br>  
+      <br>  
+      <div class="container">
+         <header class="text-center">
+            <h1>Galeria</h1>
+            <button class="pushy__btn pushy__btn--sm pushy__btn--red" onclick="volverPerfil();">Volver</button>
+         </header>
+      
+            <div class="card text-center mt-5">
+               <div class="card-body padding-card-body">
+                  <h1>Todas las cartas que existen</h1>
+             
+                  <table class="table table-responsive table-striped">
+                        <thead>
+                           <tr>
+                              <th>N° Carta</th>
+                              <th>Imagen</th>
+                              <th>Nombre</th>
+                              <th>Descripcion</th>
+                              <th>Ataque</th>
+                              <th>Defensa</th>
+                              <th>+Vida</th>
+                              <th>Mov. Horizontal</th>
+                              <th>Mov. Vertical</th>
+                              <th>Mov. Diagonal</th>
+                              <th>Tipo</th>
+                              <th>Sticker Ataque</th>
+                              <th>Sticker Defensa</th>
+                              <th>Precio</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <% for(var i = 0; i<todasLasCartasQueExisten.length; i++){  %>          
+                           <tr>
+                              <td><%=todasLasCartasQueExisten[i].idCarta%></td>
+                              <td><img src="/img/cartas/<%=todasLasCartasQueExisten[i].imagenCarta%>.png" width="50" height="50"></td>
+                              <td><%=todasLasCartasQueExisten[i].nombreCarta%></td>
+                              <td><%=todasLasCartasQueExisten[i].descripcionCarta%></td>
+                              <td><%=todasLasCartasQueExisten[i].ataqueCarta%></td>
+                              <td><%=todasLasCartasQueExisten[i].defensaCarta%></td>
+                              <td><%=todasLasCartasQueExisten[i].puntosCuraJugador%></td>
+                              <td><%=todasLasCartasQueExisten[i].casillerosMovimientoHorizontal%></td>
+                              <td><%=todasLasCartasQueExisten[i].casillerosMovimientoVertical%></td>
+                              <td><%=todasLasCartasQueExisten[i].casillerosMovimientoDiagonal%></td>
+                              <td><%=todasLasCartasQueExisten[i].tipoCarta%></td>
+                              <td><%=todasLasCartasQueExisten[i].stickerAtaque%></td>
+                              <td><%=todasLasCartasQueExisten[i].stickerDefensa%></td>
+                              <td><%=todasLasCartasQueExisten[i].precioCarta%></td>
+                           </tr>
+                           <%}%> 
+
+
+                           <% for(var i = 0; i<cartasventa.length; i++){  %>          
+                              <tr>
+                                 <td><%=cartasventa[i].idCarta%></td>
+                                 <td><img src="/img/cartas/<%=cartasventa[i].imagenCarta%>.png" width="50" height="50"></td>
+                                 <td><%=cartasventa[i].nombreCarta%></td>
+                                 <td><%=cartasventa[i].descripcionCarta%></td>
+                                 <td><%=cartasventa[i].ataqueCarta%></td>
+                                 <td><%=cartasventa[i].defensaCarta%></td>
+                                 <td><%=cartasventa[i].puntosCuraJugador%></td>
+                                 <td><%=cartasventa[i].casillerosMovimientoHorizontal%></td>
+                                 <td><%=cartasventa[i].casillerosMovimientoVertical%></td>
+                                 <td><%=cartasventa[i].casillerosMovimientoDiagonal%></td>
+                                 <td><%=cartasventa[i].tipoCarta%></td>
+                                 <td><%=cartasventa[i].stickerAtaque%></td>
+                                 <td><%=cartasventa[i].stickerDefensa%></td>
+                                 <td><%=cartasventa[i].precioCarta%></td>
+                              </tr>
+                              <%}%> 
+
+
+                              <% for(var i = 0; i<cartasapuesta.length; i++){  %>          
+                                 <tr>
+                                    <td><%=cartasapuesta[i].idCarta%></td>
+                                    <td><img src="/img/cartas/<%=cartasapuesta[i].imagenCarta%>.png" width="50" height="50"></td>
+                                    <td><%=cartasapuesta[i].nombreCarta%></td>
+                                    <td><%=cartasapuesta[i].descripcionCarta%></td>
+                                    <td><%=cartasapuesta[i].ataqueCarta%></td>
+                                    <td><%=cartasapuesta[i].defensaCarta%></td>
+                                    <td><%=cartasapuesta[i].puntosCuraJugador%></td>
+                                    <td><%=cartasapuesta[i].casillerosMovimientoHorizontal%></td>
+                                    <td><%=cartasapuesta[i].casillerosMovimientoVertical%></td>
+                                    <td><%=cartasapuesta[i].casillerosMovimientoDiagonal%></td>
+                                    <td><%=cartasapuesta[i].tipoCarta%></td>
+                                    <td><%=cartasapuesta[i].stickerAtaque%></td>
+                                    <td><%=cartasapuesta[i].stickerDefensa%></td>
+                                    <td><%=cartasapuesta[i].precioCarta%></td>
+                                 </tr>
+                                 <%}%> 
+
+                        </tbody>
+                     </table>
+            
+                  <!-- fin tabla-->  
+               </div>
+            </div>
+    
+      </div>
+   </body>
+</html>

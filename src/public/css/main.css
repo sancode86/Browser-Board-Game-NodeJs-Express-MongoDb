@@ -1,0 +1,223 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chela+One&display=swap');
+
+.login {
+	background: #e1e1e1;
+	/* background: -webkit-linear-gradient(to right, #a8e063, #56ab2f);
+	background: linear-gradient(to right, #a8e063, #56ab2f); */
+  }
+  
+  .signup {
+	background: #e1e1e1;
+	/* background: -webkit-linear-gradient(to right, #004e92, #2d39a5);
+	background: linear-gradient(to right, #004e92, #000428); */
+  }
+  
+  .table td,
+  .table th {
+	padding: .10rem !important;
+    text-align: center;
+    vertical-align: middle !important;
+  }
+  
+  .contenedorCartas {
+	
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: center;
+  }
+  
+  .diseñoSticker {
+	margin: 5px;
+	margin: 5px;
+	padding: 20px;
+    border: 1px solid #d3d3d3 !important;
+    border-radius: 4px;
+  }
+  
+  .tablaVendedor {
+	align-self: center;
+	align-content: center;
+	width: 100%;
+	border-radius: .25rem;
+  }
+  
+  .tablaVendedor th {
+	border: 1px solid #d5d5d5;
+	align-self: center;
+	align-content: center;
+	width: 50%;
+	padding: 7px;
+	height: 37px;
+  }
+  
+  .listadoVentaCompra {
+	border: 1px solid black;
+	align-self: center;
+	align-content: center;
+  }
+  
+  .valorVentaCompra {
+	border: 1px solid black;
+	align-self: center;
+	align-content: center;
+  }
+    
+  /* Mierda del modal */
+  
+  .modalDialog {
+	position: fixed;
+	font-family: Arial, Helvetica, sans-serif;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.8);
+	z-index: 99999;
+	opacity: 0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+	pointer-events: none;
+  }
+  
+  .modalDialog:target {
+	opacity: 1;
+	pointer-events: auto;
+  }
+  
+  .modalDialog>div {
+	width: 400px;
+	position: relative;
+	margin: 10% auto;
+	padding: 5px 20px 13px 20px;
+	border-radius: 2px;
+	background: #fff;
+	background: -moz-linear-gradient(#fff, #999);
+	background: -webkit-linear-gradient(#fff, #ebebeb);
+	background: -o-linear-gradient(#fff, #999);
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+  }
+  
+  .close {
+	background: #606061;
+	color: #FFFFFF;
+	line-height: 25px;
+	position: absolute;
+	right: -12px;
+	text-align: center;
+	top: -10px;
+	width: 24px;
+	text-decoration: none;
+	font-weight: bold;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	-moz-box-shadow: 1px 1px 3px #000;
+	-webkit-box-shadow: 1px 1px 3px #000;
+	box-shadow: 1px 1px 3px #000;
+  }
+  
+  .close:hover {
+	background: #fc9f9f;
+  }
+  
+  .estiloStickersDisponibles {
+	margin: 5px;
+  }
+  
+  .centrarConfigJugadorModal {
+	text-align: center;
+	align-content: center;
+	margin: 18px;
+  }
+
+  .centrarBotonesTienda{
+	margin: 18px;
+    display: flex;
+    justify-content: center;
+
+  }
+
+  .menuPrincipalEstiloBotones{
+	margin: 18px;
+	display: grid;
+    justify-content: center;
+	line-height: 6px;
+  }
+  .justificarALaIzquierda{
+	justify-content: flex-end;
+
+  }
+
+.pushy__btn--blue:hover{
+background-color: #4fb1ef !important;
+
+}
+.pushy__btn--green:hover{
+background-color: #24d3a6 !important;
+
+}
+.pushy__btn--red:hover{
+background-color: #f16e6e !important;
+
+	}
+
+a:link {
+	text-decoration: none !important;
+	}
+
+a, p, h1, h2, h3, h4, th, td{
+
+	font-family: 'Poppins', sans-serif !important;
+
+}
+
+.tamañoLoginRegister{
+
+	max-width: 328px;
+    margin: auto;
+
+}
+
+a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    color: white;
+}
+
+a.button:hover {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    color: white;
+}
+
+.padding-card-body{
+
+	 padding: 0.25rem !important; 
+}
+
+.encabezadoListaCompra{
+
+	background: #f2f2f2;
+}
+
+
+.tituloCOUW{
+
+	font-family: 'Chela One', cursive !important;
+	font-size: 52px;
+	color: #4d4d4d;
+text-shadow: 0 1px 0 #CCCCCC, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
+}

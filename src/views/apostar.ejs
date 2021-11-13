@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COUW | Apostar</title>
+    <%- include('partials/head') %>
+    <%- include('partials/nav') %>
+ 
+</head>
+<body>    
+    <br>
+    <br>
+    <br>
+    <header class="text-center">
+        <h1>Apostar</h1>
+        <button id="botonVolver" class="pushy__btn pushy__btn--sm pushy__btn--red" onclick="volverPerfil();">Volver</button>
+     </header>
+    <div class="container">     
+
+           
+                        <div class="card text-center mt-5">
+                                <div class="card-body padding-card-body">              
+                                    <p id="textoAMostrar">Apuesta una carta al azar. <br> Si ganas la recuperas y obtienes la del rival.</p>  
+                                    <div id="dadoCPU"></div> 
+                                    <div id="cartasADisputar"></div> 
+                                    <div id="dadoHUMANO"></div>           
+                                    <button id="tirarDados" style="display: none" class="pushy__btn pushy__btn--sm pushy__btn--green" onclick="tirarDados();">Tirar dados</button>                                 
+                                    <button id="deAcuerdo" class="pushy__btn pushy__btn--sm pushy__btn--green" onclick="apostarCarta();">¡De acuerdo!</button> 
+                                    <button id="deNuevo" style="display: none" class="pushy__btn pushy__btn--sm pushy__btn--green" onclick="apostar();">¡De nuevo!</button> 
+                                    <button id="noTienesCartas" style="display: none" class="pushy__btn pushy__btn--sm pushy__btn--green" onclick="volverPerfil();">¡Maldicion!</button>       
+                                </div>                              
+                        </div>                  
+                        <form id="formApostar" action="/apostarGuardar/<%=user._id%>" method="POST">
+                            <div class="form-group" style="display: none">                    
+                               <input type="text" id="todasLasCartasUsuario" name="todasLasCartasUsuario" class="form-control" value="<%=user.todasLasCartasUsuario%>" > 
+                            </div>
+                         </form>
+    </div>    
+    <input type="text" disabled style="display: none;" id="idUsuario" name="idUsuario" value="<%=user._id%>" placeholder="<%=user._id%>" >
+
+</body>
+</html>
+
+<script>
+
+var pozoDeApuesta = [];
+var restoDeCartasJson = JSON.parse('<%- restoDeCartasJson %>');
+var apuestacartasOK = JSON.parse('<%-apuestacartasOK%>');
+console.log(restoDeCartasJson);
+console.log(apuestacartasOK);
+
+function apostarCarta(){
+    
+             document.getElementById("botonVolver").style = "display : none;"
+             
+            if ( restoDeCartasJson.length != 0 ){
+
+            document.getElementById("textoAMostrar").innerHTML = "¡Estas son las cartas a disputar!";
+            var numeroRandom = Math.floor(Math.random() * apuestacartasOK.length);
+            console.log(numeroRandom);
+            console.log(apuestacartasOK[numeroRandom]);
+            pozoDeApuesta.push(apuestacartasOK[numeroRandom]);
+            var cartaApuestaCpu = [];
+            cartaApuestaCpu.push(apuestacartasOK[numeroRandom]);
+
+            var item = document.createElement("p");
+            item.innerHTML = ("<strong> Carta del Rival: </strong>" + apuestacartasOK[numeroRandom].nombreCarta);
+            document.getElementById("cartasADisputar").appendChild(item);
+
+
+
+            var numeroRandom = Math.floor(Math.random() * restoDeCartasJson.length);
+            console.log(numeroRandom);
+            console.log(restoDeCartasJson[numeroRandom]);
+            pozoDeApuesta.push(restoDeCartasJson[numeroRandom]);
+            var cartaApuestaHumano = [];
+            cartaApuestaHumano.push(restoDeCartasJson[numeroRandom]);
+
+            var item = document.createElement("p");
+            item.innerHTML = ("<strong> Tu carta: </strong>" + restoDeCartasJson[numeroRandom].nombreCarta);
+            document.getElementById("cartasADisputar").appendChild(item);
+
+            restoDeCartasJson.splice(numeroRandom, 1);
+            document.getElementById("todasLasCartasUsuario").value = JSON.stringify(restoDeCartasJson);
+
+            console.log(pozoDeApuesta);
+
+                document.getElementById("tirarDados").style = "";           
+                document.getElementById("deAcuerdo").style = "display: none";
+
+            }else{
+                document.getElementById("textoAMostrar").innerHTML = "¡No tienes cartas suficientes!";                
+                console.log("No tienes cartas suficientes!");
+                
+                document.getElementById("tirarDados").style = "display: none";           
+                document.getElementById("deAcuerdo").style = "display: none";
+                document.getElementById("deNuevo").style = "display: none";
+                document.getElementById("noTienesCartas").style = "";
+                
+
+            }
+}
+
+
+function tirarDados(){
+                var delay = ( function() {
+                var timer = 0;
+                return function(callback, ms) {
+                    clearTimeout (timer);
+                    timer = setTimeout(callback, ms);
+                };
+                 })();
+          
+             document.getElementById("textoAMostrar").innerHTML = "¡Tirando Dados!";
+            var dadoTiradoCpu = Math.floor(Math.random() * 6) + 1;
+            var dadoTiradoHumano = Math.floor(Math.random() * 6) + 1;
+
+             var item = document.createElement("img");         
+             item.src = "/img/dado/" + dadoTiradoCpu + ".png";
+             item.width = "50";
+             item.height = "50";
+             document.getElementById("dadoCPU").appendChild(item);
+
+             var item = document.createElement("img");         
+             item.src = "/img/dado/" + dadoTiradoHumano + ".png";
+             item.width = "50";
+             item.height = "50";
+             document.getElementById("dadoHUMANO").appendChild(item);
+
+             console.log("dado cpu ", dadoTiradoCpu);
+             console.log("dado humano ", dadoTiradoHumano);
+
+             if (dadoTiradoHumano > dadoTiradoCpu ){
+                document.getElementById("textoAMostrar").innerHTML = "¡Ganaste!";
+                document.getElementById("textoAMostrar").style = "color: green;";
+                console.log("gano humano");
+                for (var i = 0; i< pozoDeApuesta.length; i++){
+                    restoDeCartasJson.push(pozoDeApuesta[i]); 
+                }         
+                document.getElementById("todasLasCartasUsuario").value = JSON.stringify(restoDeCartasJson);
+
+                document.getElementById("tirarDados").style = "display: none";           
+                document.getElementById("deAcuerdo").style = "display: none";
+                document.getElementById("deNuevo").style = "display: none";
+
+                delay(function(){
+                    document.getElementById("formApostar").submit();
+                }, 3000 ); // end delay
+
+
+             }else{
+                document.getElementById("textoAMostrar").innerHTML = "¡Perdiste!";
+                document.getElementById("textoAMostrar").style = "color: red;";
+                console.log("gano cpu");
+
+                document.getElementById("tirarDados").style = "display: none";           
+                document.getElementById("deAcuerdo").style = "display: none";
+                document.getElementById("deNuevo").style = "display: none";
+
+                delay(function(){
+                    document.getElementById("formApostar").submit();
+                }, 3000 ); // end delay
+               
+             }
+
+             if (dadoTiradoHumano == dadoTiradoCpu ){            
+                document.getElementById("textoAMostrar").innerHTML = "¡Empate!";
+                document.getElementById("tirarDados").style = "display: none";           
+                document.getElementById("deAcuerdo").style = "display: none";
+                document.getElementById("deNuevo").style = "";
+              
+             }
+
+
+
+}
+
+
+
+</script>
